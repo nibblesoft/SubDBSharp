@@ -61,14 +61,54 @@ namespace SubDBSharp
         public string UploadSubtitle(string movieFile, string subfile)
         {
             string movieHash = Utils.GetHashString(movieFile);
-            string subText = File.ReadAllText(subfile, Encoding.UTF8);
-            byte[] textBytes = Encoding.UTF8.GetBytes(subText);
+            string contentBody = GetFormatedBody(movieHash, File.ReadAllText(subfile, Encoding.UTF8));
+            byte[] textBytes = Encoding.UTF8.GetBytes(contentBody);
             string action = $"?action=upload&hash={movieHash}";
             HttpWebRequest request = RunRequestGet(action, WebRequestMethods.Http.Post);
+            request.ContentType = "multipart/form-data; boundary=xYzZY";
+            request.Headers.Add(HttpRequestHeader.Pragma, "no-cache");
             request.ContentLength = textBytes.Length;
-            Stream rs = request.GetRequestStream();
-            rs.Write(textBytes, 0, textBytes.Length);
-            return ReadResponseStream(request.GetResponse());
+            Stream requestStream = request.GetRequestStream();
+            requestStream.Write(textBytes, 0, textBytes.Length);
+            requestStream.Dispose();
+            try
+            {
+                using (WebResponse responseStream = request.GetResponse())
+                {
+                    return ReadResponseStream(responseStream);
+                }
+            }
+            catch (WebException ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                if (requestStream != null)
+                {
+                    requestStream.Close();
+                    requestStream.Dispose();
+                }
+            }
+        }
+
+        private static string GetFormatedBody(string movieHash, string subtitleContent)
+        {
+            // PAYLOAD
+            string boundaryFormat = @"--xYzZY
+Content-Disposition: form-data; name=""hash""
+
+{0}
+--xYzZY
+Content-Disposition: form-data; name=""file""; filename=""{0}.srt""
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: binary
+
+{1}
+
+--xYzZY
+";
+            return string.Format(boundaryFormat, movieHash, subtitleContent.TrimEnd());
         }
 
         public HttpWebRequest RunRequestGet(string action, string method)
@@ -86,5 +126,6 @@ namespace SubDBSharp
                 return sr.ReadToEnd();
             }
         }
+
     }
 }
