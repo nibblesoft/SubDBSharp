@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubDBSharp", "SubDBSharp\SubDBSharp.csproj", "{E2DA0387-3725-49A2-A0B6-57E9869DB524}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubDBSharp.Test", "SubDBSharp.Test\SubDBSharp.Test.csproj", "{D67E841D-ABEE-4057-BFE3-BC57A88B8CD0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E2DA0387-3725-49A2-A0B6-57E9869DB524}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2DA0387-3725-49A2-A0B6-57E9869DB524}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2DA0387-3725-49A2-A0B6-57E9869DB524}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2DA0387-3725-49A2-A0B6-57E9869DB524}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D67E841D-ABEE-4057-BFE3-BC57A88B8CD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D67E841D-ABEE-4057-BFE3-BC57A88B8CD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D67E841D-ABEE-4057-BFE3-BC57A88B8CD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D67E841D-ABEE-4057-BFE3-BC57A88B8CD0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
