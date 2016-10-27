@@ -9,6 +9,8 @@ namespace SubDBSharp
 {
     public static class Utils
     {
+        private static readonly StringBuilder _hexBuilder = new StringBuilder();
+
         public static string GetHashString(string file)
         {
             int bytesToRead = 64 * 1024;
@@ -29,15 +31,14 @@ namespace SubDBSharp
             }
         }
 
-        private static StringBuilder hexBuilder = new StringBuilder();
         private static string ToHexadecimal(byte[] bytes)
         {
-            hexBuilder.Length = 0;
+            _hexBuilder.Length = 0;
             for (int i = 0; i < bytes.Length; i++)
             {
-                hexBuilder.Append(bytes[i].ToString("x2"));
+                _hexBuilder.Append(bytes[i].ToString("x2"));
             }
-            return hexBuilder.ToString();
+            return _hexBuilder.ToString();
         }
     }
 }

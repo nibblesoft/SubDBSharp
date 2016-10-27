@@ -7,13 +7,13 @@ namespace SubDBSharp.Test
     [TestClass]
     public class UnitTest1
     {
-        static readonly Uri _sandBoxEndPoint = new Uri("http://sandbox.thesubdb.com/");
+        private static readonly Uri _sandBoxAddress = new Uri("http://sandbox.thesubdb.com/");
+        private static readonly Client _client = new Client("SubDBSharp", 1.0, "https://github.com/ivandrofly/SubDBSharp");
 
         [TestMethod]
         public void TestAvailableLanguages()
         {
-            var client = new Client("SubDBSharp", "1.0", "https://github.com/ivandrofly/SubDBSharp");
-            var sClient = new SubDBClient(client);
+            var sClient = new SubDBClient(_client, _sandBoxAddress);
             string languagues = sClient.LanguagesAvailable();
             Assert.IsTrue(languagues.Length > 0);
         }
@@ -21,8 +21,7 @@ namespace SubDBSharp.Test
         [TestMethod]
         public void TestSearchSubtitle()
         {
-            var client = new Client("SubDBSharp", "1.0", "https://github.com/ivandrofly/SubDBSharp");
-            var sClient = new SubDBClient(client);
+            var sClient = new SubDBClient(_client, _sandBoxAddress);
             string languagues = sClient.SearchSubtitle("ffd8d4aa68033dc03d1c8ef373b9028c");
             Assert.IsTrue(languagues.Length > 0);
         }
@@ -30,8 +29,7 @@ namespace SubDBSharp.Test
         [TestMethod]
         public void TestDownloadSubtitle()
         {
-            var client = new Client("SubDBSharp", "1.0", "https://github.com/ivandrofly/SubDBSharp");
-            var sClient = new SubDBClient(client);
+            var sClient = new SubDBClient(_client, _sandBoxAddress);
             Stream ms = sClient.DownloadSubtitle("ffd8d4aa68033dc03d1c8ef373b9028c", "en");
             using (var fs = new FileStream("Subtitle-Downloaded.srt", FileMode.Create, FileAccess.Write))
             {
@@ -48,12 +46,11 @@ namespace SubDBSharp.Test
         [TestMethod]
         public void TestUploadSubtitle()
         {
-            string movieFile = "";
-            string subfile = "";
+            string movieFile = @"D:\uTorrent\The Huntsman Winter's War (2016) [YTS.AG]\The.Huntsman.Winter's.War.2016.720p.BluRay.x264-[YTS.AG].mp4";
+            string subfile = @"D:\uTorrent\The Huntsman Winter's War (2016) [YTS.AG]\The.Huntsman.Winter's.War.2016.720p.BluRay.x264-[YTS.AG].mp4";
             string hash = Utils.GetHashString(movieFile);
-            var client = new Client("SubDBSharp", "1.0", "https://github.com/ivandrofly/SubDBSharp");
-            var sClient = new SubDBClient(_sandBoxEndPoint, client);
-            string ouput = sClient.UploadSubtitle(movieFile, subfile);
+            var sClient = new SubDBClient(_client, _sandBoxAddress);
+            sClient.UploadSubtitle(movieFile, subfile);
         }
 
     }

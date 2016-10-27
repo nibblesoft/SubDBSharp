@@ -8,22 +8,32 @@ namespace SubDBSharp
     public class SubDBClient
     {
         private const string ProtocolName = "SubDB";
-        private const string PrtocolVersion = "1.0";
-        private readonly Uri _baseAddress;
-        private readonly string _userAgent;
+        private const string ProtocolVersion = "1.0";
+        public static readonly Uri SubDBApiUrl = new Uri("http://api.thesubdb.com/", UriKind.Absolute);
+
+        public AvailableLanguages AvailableLanguages { get; }
+        public SearchSubtitle SearchSubtitle { get; }
+        public DownloadSubtitle DownloadSubtitle { get; }
+        public UploadSubtitle UploadSubtitle { get; }
+
+        public Uri BaseAddress
+        {
+            get
+            {
+                return _baseAddress;
+            }
+        }
 
         public SubDBClient(Client client)
-            : this(new Uri("http://api.thesubdb.com/"), client)
+            : this(client, new Uri("http://api.thesubdb.com/"))
         {
         }
 
-        public SubDBClient(Uri _endPoint, Client client)
+        public SubDBClient(Client client, Uri baseAddress)
         {
-            _baseAddress = _endPoint;
-            _userAgent = string.Format("{0}/{1} ({2}/{3}; {4})",
-                ProtocolName, PrtocolVersion, client.Name, client.Version, client.Url);
+            _baseAddress = baseAddress;
+            _userAgent = string.Format("{0}/{1} {2}", ProtocolName, ProtocolVersion, client);
         }
-
 
         public string LanguagesAvailable()
         {
@@ -58,7 +68,7 @@ namespace SubDBSharp
             return new MemoryStream(buff);
         }
 
-        public string UploadSubtitle(string movieFile, string subfile)
+        public void UploadSubtitle(string movieFile, string subfile)
         {
             string movieHash = Utils.GetHashString(movieFile);
             string contentBody = GetFormatedBody(movieHash, File.ReadAllText(subfile, Encoding.UTF8));
@@ -67,20 +77,14 @@ namespace SubDBSharp
             HttpWebRequest request = RunRequestGet(action, WebRequestMethods.Http.Post);
             request.ContentType = "multipart/form-data; boundary=xYzZY";
             request.Headers.Add(HttpRequestHeader.Pragma, "no-cache");
+            request.Timeout = 1000 * 10;
             request.ContentLength = textBytes.Length;
             Stream requestStream = request.GetRequestStream();
             requestStream.Write(textBytes, 0, textBytes.Length);
-            requestStream.Dispose();
+
             try
             {
-                using (WebResponse responseStream = request.GetResponse())
-                {
-                    return ReadResponseStream(responseStream);
-                }
-            }
-            catch (WebException ex)
-            {
-                return ex.Message;
+                WebResponse responseStream = request.GetResponse();
             }
             finally
             {
@@ -108,10 +112,10 @@ Content-Transfer-Encoding: binary
 
 --xYzZY
 ";
-            return string.Format(boundaryFormat, movieHash, subtitleContent.TrimEnd());
+            return string.Format(boundaryFormat, movieHash, subtitleContent);
         }
 
-        public HttpWebRequest RunRequestGet(string action, string method)
+        private HttpWebRequest RunRequestGet(string action, string method)
         {
             var request = (HttpWebRequest)WebRequest.Create(_baseAddress + action);
             request.UserAgent = _userAgent;
