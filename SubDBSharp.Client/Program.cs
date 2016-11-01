@@ -1,4 +1,5 @@
-﻿using SubDBSharp;
+﻿#if false
+using SubDBSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -157,3 +158,5 @@ namespace SubDbSharpConsole
 
     }
 }
+
+#endif

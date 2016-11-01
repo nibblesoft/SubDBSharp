@@ -2,98 +2,170 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Linq;
 
 namespace SubDBSharp
 {
     public class SubDBClient
     {
-        private const string ProtocolName = "SubDB";
-        private const string ProtocolVersion = "1.0";
+        // TODO: Dispose.
+        private readonly HttpClient _httpClient = new HttpClient();
+
+        public const string ProtocolName = "SubDB";
+        public const string ProtocolVersion = "1.0";
         public static readonly Uri SubDBApiUrl = new Uri("http://api.thesubdb.com/", UriKind.Absolute);
-
-        public AvailableLanguages AvailableLanguages { get; }
-        public SearchSubtitle SearchSubtitle { get; }
-        public DownloadSubtitle DownloadSubtitle { get; }
-        public UploadSubtitle UploadSubtitle { get; }
-
-        public Uri BaseAddress
-        {
-            get
-            {
-                return _baseAddress;
-            }
-        }
-
+        public readonly string UserAgent;
+        Client _client;
         public SubDBClient(Client client)
-            : this(client, new Uri("http://api.thesubdb.com/"))
+            : this(client, SubDBApiUrl)
         {
         }
 
         public SubDBClient(Client client, Uri baseAddress)
         {
-            _baseAddress = baseAddress;
-            _userAgent = string.Format("{0}/{1} {2}", ProtocolName, ProtocolVersion, client);
+            _client = client;
+            UserAgent = string.Format("{0}/{1} {2}", ProtocolName, ProtocolVersion, client);
+            _httpClient.BaseAddress = SubDBApiUrl;
+            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("SubDB", "1.0"));
         }
 
-        public string LanguagesAvailable()
+        public async Task<IReadOnlyList<Language>> LanguagesAvailable()
         {
-            string action = "?action=languages";
-            return ReadResponseStream(RunRequestGet(action, WebRequestMethods.Http.Get).GetResponse());
+            // TODO: Move this to a helper classe.
+            string endPoint = "?action=languages";
+            Uri fullUrl = new Uri(SubDBApiUrl, endPoint);
+            //var request = new HttpRequestMessage();
+
+            HttpResponseMessage response = await _httpClient.GetAsync(fullUrl);
+            string responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var readonlyList = new List<Language>();
+            foreach (var isoTwoLetter in responseString.Split(','))
+            {
+                var lang = new Language(isoTwoLetter);
+                readonlyList.Add(lang);
+            }
+            return readonlyList;
         }
 
-        public string SearchSubtitle(string hash, string version = "")
+        public async Task<IReadOnlyList<Language>> SearchSubtitle(string hash, bool getVersions = false)
         {
             string action = $"?action=search&hash={hash}";
-            if (version.Length > 0)
-                action += $"&version={version}";
-            return ReadResponseStream(RunRequestGet(action, WebRequestMethods.Http.Get).GetResponse());
-        }
-
-        public Stream DownloadSubtitle(string hash, string language)
-        {
-            string action = $"?action=download&hash={hash}&language={language}";
-            var ms = new MemoryStream();
-            Stream r = RunRequestGet(action, WebRequestMethods.Http.Get).GetResponse().GetResponseStream();
-            int buffSize = 1024;
-            byte[] buffer = new byte[buffSize];
-            int bytesRead = 0;
-            int totalReadBytes = 0;
-            while ((bytesRead = r.Read(buffer, 0, buffSize)) > 0)
+            if (getVersions)
+                action += $"&versions";
+            var fullUrl = new Uri(SubDBApiUrl, action);
+            var response = await _httpClient.GetAsync(fullUrl).ConfigureAwait(false);
+            var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var listLanguages = new List<Language>();
+            foreach (var token in responseString.Split(','))
             {
-                ms.Write(buffer, 0, bytesRead);
-                totalReadBytes += bytesRead;
+                // Tokens are available only if getVersion == true
+                string[] tokens = token.Split(':');
+                Language lang = null;
+                if (getVersions)
+                {
+                    lang = new Language(tokens[0], int.Parse(tokens[1]));
+                }
+                else
+                {
+                    lang = new Language(tokens[0]);
+                }
+                if (lang != null)
+                    listLanguages.Add(lang);
             }
-            var buff = ms.ToArray();
-            Array.Clear(buff, totalReadBytes, (int)ms.Length - totalReadBytes);
-            return new MemoryStream(buff);
+            return listLanguages;
         }
 
-        public void UploadSubtitle(string movieFile, string subfile)
+        public async Task<Stream> DownloadSubtitle(string hash, Language language)
+        {
+            string endPoints = $"?action=download&hash={hash}&language={language.Culture.TwoLetterISOLanguageName}";
+            var fullUrl = new Uri(SubDBApiUrl, endPoints);
+            return await _httpClient.GetStreamAsync(fullUrl/*, HttpCompletionOption.ResponseContentRead*/).ConfigureAwait(false);
+        }
+
+
+        public async Task<bool> UploadSubtitle(string movieFile, string subfile)
         {
             string movieHash = Utils.GetHashString(movieFile);
-            string contentBody = GetFormatedBody(movieHash, File.ReadAllText(subfile, Encoding.UTF8));
-            byte[] textBytes = Encoding.UTF8.GetBytes(contentBody);
-            string action = $"?action=upload&hash={movieHash}";
-            HttpWebRequest request = RunRequestGet(action, WebRequestMethods.Http.Post);
-            request.ContentType = "multipart/form-data; boundary=xYzZY";
-            request.Headers.Add(HttpRequestHeader.Pragma, "no-cache");
-            request.Timeout = 1000 * 10;
-            request.ContentLength = textBytes.Length;
-            Stream requestStream = request.GetRequestStream();
-            requestStream.Write(textBytes, 0, textBytes.Length);
+            //string contentBody = GetFormatedBody(movieHash, File.ReadAllText(subfile, Encoding.UTF8));
+            //byte[] textBytes = Encoding.UTF8.GetBytes(contentBody);
+            string endPoint = $"?action=upload&hash={movieHash}";
+            var fullUrl = new Uri(SubDBApiUrl, endPoint);
+            //HttpWebRequest request = RunRequestGet(action, WebRequestMethods.Http.Post);
+            //request.ContentType = "multipart/form-data; boundary=xYzZY";
+            //request.Headers.Add(HttpRequestHeader.Pragma, "no-cache");
+            //request.Timeout = 1000 * 10;
+            //request.ContentLength = textBytes.Length;
+            //Stream requestStream = request.GetRequestStream();
+            //requestStream.Write(textBytes, 0, textBytes.Length);
 
-            try
-            {
-                WebResponse responseStream = request.GetResponse();
-            }
-            finally
-            {
-                if (requestStream != null)
-                {
-                    requestStream.Close();
-                    requestStream.Dispose();
-                }
-            }
+            //try
+            //{
+            //    WebResponse responseStream = request.GetResponse();
+            //}
+            //finally
+            //{
+            //    if (requestStream != null)
+            //    {
+            //        requestStream.Close();
+            //        requestStream.Dispose();
+            //    }
+            //}
+
+            //POST /?action=upload HTTP/1.1
+            //Host: api.thesubdb.com
+            //User-Agent: SubDB/1.0 (Pyrrot/0.1; http://github.com/jrhames/pyrrot-cli)
+            //Content-Length: 60047
+            //Content-Type: multipart/form-data; boundary=xYzZY
+
+            //- - --xYzZY
+            //Content-Disposition: form-data; name="hash"
+
+            //edc1981d6459c6111fe36205b4aff6c2
+            //- - --xYzZY
+            //Content-Disposition: form-data; name="file"; filename="subtitle.srt"
+            //Content-Type: application/octet-stream
+
+
+            //[PAYLOAD]
+
+
+            // Subtilte content.
+            StringContent stringContent = new StringContent(File.ReadAllText(subfile), Encoding.UTF8);
+            StringContent hashString = new StringContent(movieHash);
+
+
+            // TODO: Prevent adding boundary everytime we try to add a HttpContent. (MultipartContent or MultipartFormDataContent).
+
+            var multiPartContent1 = new MultipartContent("form-data", "xYzZY"); // multipart/form-data?
+            multiPartContent1.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+            multiPartContent1.Headers.ContentDisposition.Name = "hash";
+            multiPartContent1.Add(hashString);
+
+            var multiPartContent2 = new MultipartContent("form-data", "xYzZY"); // Note: (multipart/form-data) mulpart is not required see implementation.
+            multiPartContent2.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+            multiPartContent2.Headers.ContentDisposition.Name = "file";
+            multiPartContent2.Headers.ContentDisposition.FileName = "subtitle.srt";
+            multiPartContent2.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            multiPartContent2.Add(stringContent);
+            // Add boundary.
+
+            // Instantiate formdate with default boundary.
+            var formData = new MultipartFormDataContent("xYzZY");
+            //formData.Headers.ContentType = new MediaTypeHeaderValue("form-data");
+            // TODO: formData.Headers.ContentLength = 10000;
+            formData.Add(multiPartContent1);
+            formData.Add(multiPartContent2);
+            var response = await _httpClient.PostAsync(fullUrl, formData);
+            // _httpClient
+            return response.IsSuccessStatusCode;
+
+            // TODO: How to prevent adding boundary when it's not neccessary!
+            // SOLUTIONS:
+            // Derive from MultipartContent and modify it by allowing stinng.Empty as boundary.
         }
 
         private static string GetFormatedBody(string movieHash, string subtitleContent)
@@ -114,22 +186,5 @@ Content-Transfer-Encoding: binary
 ";
             return string.Format(boundaryFormat, movieHash, subtitleContent);
         }
-
-        private HttpWebRequest RunRequestGet(string action, string method)
-        {
-            var request = (HttpWebRequest)WebRequest.Create(_baseAddress + action);
-            request.UserAgent = _userAgent;
-            request.Method = method;
-            return request;
-        }
-
-        private static string ReadResponseStream(WebResponse reponseStream)
-        {
-            using (var sr = new StreamReader(reponseStream.GetResponseStream()))
-            {
-                return sr.ReadToEnd();
-            }
-        }
-
     }
 }

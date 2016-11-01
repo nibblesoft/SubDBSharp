@@ -20,7 +20,6 @@ namespace SubDBSharp
             }
         }
 
-
         public Client(string name, string version, string url) :
             this(name, version, new Uri(url))
         {
