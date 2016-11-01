@@ -4,10 +4,6 @@ namespace SubDBSharp
 {
     public class Language
     {
-        public CultureInfo Culture { get; }
-        public int Count { get; private set; }
-        public string Name { get; private set; }
-
         public Language(string name)
             : this(name, 0)
         {
@@ -20,9 +16,13 @@ namespace SubDBSharp
             Count = count;
         }
 
-        public override string ToString()
-        {
-            return $"{Culture.DisplayName}, Versions: {Count}";
-        }
+        public CultureInfo Culture { get; }
+        public int Count { get; }
+        public string Name { get; }
+
+        public override string ToString() => Name;
+
+        public string ToStringVerbose() => $"{Culture.DisplayName}, Versions: {Count}";
+
     }
 }

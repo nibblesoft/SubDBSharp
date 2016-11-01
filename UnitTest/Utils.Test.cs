@@ -1,12 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Xunit;
 
 namespace SubDBSharp.Test
 {
-    [TestClass]
     public class UtilsTest
     {
-        [TestMethod]
+        [Fact]
         public void TestGetHashString()
         {
             // dexter
@@ -14,7 +12,7 @@ namespace SubDBSharp.Test
             // http://thesubdb.com/api/samples/dexter.mp4
             string path = @"dexter.mp4";
             string hashString = Utils.GetHashString(path);
-            Assert.AreEqual(expected, hashString);
+            Assert.Equal(expected, hashString);
         }
     }
 }

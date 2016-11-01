@@ -1,18 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubDBSharp", "SubDBSharp\SubDBSharp.csproj", "{E2DA0387-3725-49A2-A0B6-57E9869DB524}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubDbSharp", "SubDbSharp\SubDbSharp.csproj", "{BEEF17C9-2572-4D6F-B339-B7B2C6D94028}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubDBSharp.Test", "SubDBSharp.Test\SubDBSharp.Test.csproj", "{D67E841D-ABEE-4057-BFE3-BC57A88B8CD0}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2BD1DB94-763B-4DEE-AE1A-E7B1470703F0}"
-	ProjectSection(SolutionItems) = preProject
-		Note.txt = Note.txt
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubDBSharp.Client", "SubDbSharp.Client\SubDBSharp.Client.csproj", "{988A4EA4-E534-40B0-8CAA-919B2CBC7363}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{A8791B2B-B148-47BA-9B9D-A9A2163CCA48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,18 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E2DA0387-3725-49A2-A0B6-57E9869DB524}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E2DA0387-3725-49A2-A0B6-57E9869DB524}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E2DA0387-3725-49A2-A0B6-57E9869DB524}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E2DA0387-3725-49A2-A0B6-57E9869DB524}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D67E841D-ABEE-4057-BFE3-BC57A88B8CD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D67E841D-ABEE-4057-BFE3-BC57A88B8CD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D67E841D-ABEE-4057-BFE3-BC57A88B8CD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D67E841D-ABEE-4057-BFE3-BC57A88B8CD0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{988A4EA4-E534-40B0-8CAA-919B2CBC7363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{988A4EA4-E534-40B0-8CAA-919B2CBC7363}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{988A4EA4-E534-40B0-8CAA-919B2CBC7363}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{988A4EA4-E534-40B0-8CAA-919B2CBC7363}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEEF17C9-2572-4D6F-B339-B7B2C6D94028}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEEF17C9-2572-4D6F-B339-B7B2C6D94028}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEEF17C9-2572-4D6F-B339-B7B2C6D94028}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEEF17C9-2572-4D6F-B339-B7B2C6D94028}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8791B2B-B148-47BA-9B9D-A9A2163CCA48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8791B2B-B148-47BA-9B9D-A9A2163CCA48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8791B2B-B148-47BA-9B9D-A9A2163CCA48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8791B2B-B148-47BA-9B9D-A9A2163CCA48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
