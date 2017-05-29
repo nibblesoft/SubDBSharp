@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SubDbSharp.Models;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace SubDBSharp
         }
         */
 
-        internal static HttpRequestMessage BuildRequestMessage(string movieFile, string subtitleFile, string endPoint, Uri subDBApiUrl)
+        internal static HttpRequestMessage BuildRequestMessage(Request request, string endPoint, Uri subDBApiUrl)
         {
             // PAYLOAD
             string boundaryFormat = @"--xYzZY
@@ -73,33 +74,23 @@ Content-Transfer-Encoding: binary
 
 --xYzZY
 ";
-            // Payloads
-            string movieHash = Utils.GetHashString(movieFile);
-            string subtitleContent = File.ReadAllText(subtitleFile).Trim();
-
             // Uri
-            var uri = new Uri(string.Format(endPoint, movieHash), UriKind.Relative);
-            var fullUrl = new Uri(subDBApiUrl, uri);
+            Uri uri = new Uri(string.Format(endPoint, request.MovieHash), UriKind.Relative);
+            Uri fullUrl = new Uri(subDBApiUrl, uri);
 
-            string body = string.Format(boundaryFormat, movieHash, subtitleContent);
-            var len = body.Length;
-            var stringContent = new StringContent(body, Encoding.UTF8);
+            string body = string.Format(boundaryFormat, request, request.Content);
+            StringContent stringContent = new StringContent(body, Encoding.UTF8);
+            stringContent.Headers.ContentType = new MediaTypeHeaderValue("multipart/form-data");
+            stringContent.Headers.ContentType.Parameters.Add(new NameValueHeaderValue("boundary", "xYzZY"));
+            //stringContent.Headers.ContentLength = contentLen;
 
-            // Request
-            var request = new HttpRequestMessage()
+            // Request message
+            return new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
                 RequestUri = fullUrl,
                 Content = stringContent
             };
-
-            // contentLen is equal to body.Length;
-            var contentLen = stringContent.Headers.ContentLength;
-
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("multipart/form-data");
-            request.Content.Headers.ContentType.Parameters.Add(new NameValueHeaderValue("boundary", "xYzZY"));
-            request.Content.Headers.ContentLength = contentLen;
-            return request;
         }
 
     }

@@ -5,8 +5,8 @@ namespace SubDBSharp
 {
     public class Response : IDisposable
     {
-        public StreamContent StreamContent { get; private set; }
-        public string FileName { get; private set; }
+        public StreamContent StreamContent { get; }
+        public string FileName { get; }
 
         public Response(string fileName, StreamContent streamContent)
         {

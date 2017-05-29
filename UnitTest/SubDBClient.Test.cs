@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SubDbSharp.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -56,11 +57,14 @@ namespace SubDBSharp.Test
         [Fact]
         public void TestUploadSubtitle()
         {
-            string movieFile = @"D:\uTorrent\The Huntsman Winter's War (2016) [YTS.AG]\The.Huntsman.Winter's.War.2016.720p.BluRay.x264-[YTS.AG].mp4";
-            string subfile = @"D:\uTorrent\The Huntsman Winter's War (2016) [YTS.AG]\The.Huntsman.Winter's.War.2016.720p.BluRay.x264-[YTS.AG].mp4";
-            string hash = Utils.GetHashString(movieFile);
+            string subfile = @"./Assets/Logan.2017.en.srt";
+            //string hash = ""
             var subDbClient = new SubDBClient(_sandBoxAddress);
-            subDbClient.UploadSubtitle(movieFile, subfile);
+            // logan 2k17 "94afe902cac852e14f2537d923ba95d7"
+
+            string content = File.ReadAllText(subfile);
+            var request = new Request { MovieHash = "94afe902cac852e14f2537d923ba95d7", Content = content };
+            subDbClient.UploadSubtitle(request);
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SubDbSharp.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -132,7 +133,7 @@ namespace SubDBSharp
         }
 
         // TODO: Make a request model for these parameters.
-        public async Task<bool> UploadSubtitle(string movieFile, string subtitleFile)
+        public async Task<bool> UploadSubtitle(Request request)
         {
             string endPoint = "?action=upload&hash={0}";
             //POST /?action=upload HTTP/1.1
@@ -151,17 +152,12 @@ namespace SubDBSharp
 
 
             //[PAYLOAD]
-            using (var requestMessage = Utils.BuildRequestMessage(movieFile, subtitleFile, endPoint, BaseAddress))
+            using (var requestMessage = Utils.BuildRequestMessage(request, endPoint, BaseAddress))
             {
                 var response = await _httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false);
                 return response.IsSuccessStatusCode;
             }
         }
 
-        public void Dispose()
-        {
-            _httpClient.Dispose();
-            _httpClientHandler.Dispose();
-        }
     }
 }
