@@ -90,7 +90,9 @@ namespace SubDBSharp
                     lang = new Language(tokens[0]);
                 }
                 if (lang != null)
+                {
                     listLanguages.Add(lang);
+                }
             }
             return listLanguages;
         }
@@ -111,7 +113,6 @@ namespace SubDBSharp
             {
                 _paramsBuider.AppendFormat("{0},", lang.Name);
             }
-
             // Remove last ','
             _paramsBuider.Remove(_paramsBuider.Length - 1, 1);
 

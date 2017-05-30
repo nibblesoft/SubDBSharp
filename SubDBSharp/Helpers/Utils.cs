@@ -33,7 +33,7 @@ namespace SubDBSharp
             }
         }
 
-        private static string ToHexadecimal(byte[] bytes)
+        public static string ToHexadecimal(byte[] bytes)
         {
             _hexBuilder.Length = 0;
             for (int i = 0; i < bytes.Length; i++)
@@ -42,21 +42,6 @@ namespace SubDBSharp
             }
             return _hexBuilder.ToString();
         }
-
-        /*
-        internal static string FormatUserAgent(ProductHeaderValue producInformation)
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0} ({1} {2}; {3}; {4}; SubDBSharp {5}",
-                producInformation,
-                Environment.OSVersion.Platform,
-                Environment.OSVersion.Version.ToString(3),
-                Environment.Is64BitOperatingSystem ? "amd64" : "x86",
-                CultureInfo.CurrentCulture.Name,
-                "1.0" // TODO: Get information from assembly.
-                );
-            //https://github.com/nibblesoft/SubDBSharp
-        }
-        */
 
         internal static HttpRequestMessage BuildRequestMessage(Request request, string endPoint, Uri subDBApiUrl)
         {
@@ -82,7 +67,6 @@ Content-Transfer-Encoding: binary
             StringContent stringContent = new StringContent(body, Encoding.UTF8);
             stringContent.Headers.ContentType = new MediaTypeHeaderValue("multipart/form-data");
             stringContent.Headers.ContentType.Parameters.Add(new NameValueHeaderValue("boundary", "xYzZY"));
-            //stringContent.Headers.ContentLength = contentLen;
 
             // Request message
             return new HttpRequestMessage()
