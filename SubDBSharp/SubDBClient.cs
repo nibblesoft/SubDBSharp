@@ -12,7 +12,6 @@ namespace SubDBSharp
 {
     public class SubDBClient
     {
-        public static readonly Uri SubDBApiUrl = new Uri("http://api.thesubdb.com/", UriKind.Absolute);
         private readonly StringBuilder _paramsBuider;
         private readonly HttpClient _httpClient;
         private readonly Uri BaseAddress;
@@ -20,7 +19,7 @@ namespace SubDBSharp
 
         #region Constuctors
 
-        public SubDBClient() : this(new ProductHeaderValue("SubDBSharp", "1.1"), SubDBApiUrl)
+        public SubDBClient() : this(new ProductHeaderValue("SubDBSharp", "1.1"), ApiUrls.SubDBApiUrl)
         {
         }
 
@@ -67,7 +66,7 @@ namespace SubDBSharp
             string action = $"?action=search&hash={hash}";
             if (getVersions)
                 action += $"&versions";
-            var fullUrl = new Uri(SubDBApiUrl, action);
+            var fullUrl = new Uri(ApiUrls.SubDBApiUrl, action);
             var response = await _httpClient.GetAsync(fullUrl).ConfigureAwait(false);
             var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var listLanguages = new List<Language>();
@@ -106,7 +105,7 @@ namespace SubDBSharp
 
             string uriS = string.Format(endPoint, _paramsBuider.ToString());
             Uri endPointUri = new Uri(uriS, UriKind.Relative);
-            var fullUrl = new Uri(SubDBApiUrl, endPointUri);
+            var fullUrl = new Uri(ApiUrls.SubDBApiUrl, endPointUri);
 
             HttpResponseMessage responseMessage = await _httpClient.GetAsync(fullUrl).ConfigureAwait(false);
 
