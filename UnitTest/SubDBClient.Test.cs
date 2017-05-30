@@ -32,7 +32,7 @@ namespace SubDBSharp.Test
         {
             Language[] languages = { new Language("en") };
             var subDbClient = new SubDBClient(_sandBoxAddress);
-            var response = subDbClient.DownloadSubtitle("ffd8d4aa68033dc03d1c8ef373b9028c", languages);
+            Task<Response> response = subDbClient.DownloadSubtitle("ffd8d4aa68033dc03d1c8ef373b9028c", languages);
 
             string file = "Subtitle-Downloaded.srt";
             if (File.Exists(file))
@@ -44,7 +44,7 @@ namespace SubDBSharp.Test
                 var buffer = new byte[1024];
                 int bytesRead = 0;
                 // TODO: Fix this hugly line...
-                Stream stream = response.Result.StreamContent.ReadAsStreamAsync().Result;
+                Stream stream = response.Result.SubStream;
                 while ((bytesRead = stream.Read(buffer, 0, 1024)) > 0)
                 {
                     fs.Write(buffer, 0, bytesRead);

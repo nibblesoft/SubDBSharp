@@ -1,22 +1,23 @@
 ﻿using System;
+using System.IO;
 using System.Net.Http;
 
 namespace SubDBSharp
 {
     public class Response : IDisposable
     {
-        public StreamContent StreamContent { get; }
+        public Stream SubStream { get; }
         public string FileName { get; }
 
-        public Response(string fileName, StreamContent streamContent)
+        public Response(string fileName, Stream streamContent)
         {
             FileName = fileName;
-            StreamContent = streamContent;
+            SubStream = streamContent;
         }
 
         public void Dispose()
         {
-            StreamContent?.Dispose();
+            SubStream?.Dispose();
         }
     }
 }

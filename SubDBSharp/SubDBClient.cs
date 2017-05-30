@@ -122,13 +122,14 @@ namespace SubDBSharp
             using (HttpResponseMessage responseMessage = await _httpClient.GetAsync(fullUrl).ConfigureAwait(false))
             {
                 Stream responseStreamContent = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                var streamContent = new StreamContent(responseStreamContent);
                 string file = string.Empty;
                 if (responseMessage.Content.Headers.ContentDisposition != null)
                 {
                     file = responseMessage.Content.Headers.ContentDisposition.FileName;
                 }
-                return new Response(file, streamContent);
+                var ms = new MemoryStream();
+                responseStreamContent.CopyTo(ms);
+                return new Response(file, ms);
             }
         }
 
