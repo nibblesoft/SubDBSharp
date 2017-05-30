@@ -61,6 +61,12 @@ namespace SubDBSharp
             }
         }
 
+        /// <summary>
+        /// To list the available subtitle languages for a given hash, a HTTP GET request will be made to the server.
+        /// </summary>
+        /// <param name="hash">The parameter hash is the hash of the video file, generated using our hash function.</param>
+        /// <param name="getVersions">This parameter is optional. Using it to return how many versions per language of a subtitle we have in our database.</param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<Language>> SearchSubtitle(string hash, bool getVersions = false)
         {
             string action = $"?action=search&hash={hash}";
@@ -89,12 +95,18 @@ namespace SubDBSharp
             return listLanguages;
         }
 
+        /// <summary>
+        /// To download a subtitle, a HTTP GET request will be made to the server.
+        /// </summary>
+        /// <param name="hash">The parameter hash is the hash of the video file, generated using our hash function.</param>
+        /// <param name="languages"> The parameter language can be a single language code (ex.: us), or a comma separated list in order of priority (ex.: us,nl).
+        /// //When using a comma separated list, the first subtitle found is returned.</param>
+        /// <returns></returns>
         public async Task<Response> DownloadSubtitle(string hash, params Language[] languages)
         {
             string endPoint = $"?action=download&hash={hash}" + "&language={0}";
             _paramsBuider.Length = 0;
 
-            // {language.Culture.TwoLetterISOLanguageName}";
             foreach (Language lang in languages)
             {
                 _paramsBuider.AppendFormat("{0},", lang.Name);
@@ -106,32 +118,24 @@ namespace SubDBSharp
             string uriS = string.Format(endPoint, _paramsBuider.ToString());
             Uri endPointUri = new Uri(uriS, UriKind.Relative);
             var fullUrl = new Uri(ApiUrls.SubDBApiUrl, endPointUri);
-
-            HttpResponseMessage responseMessage = await _httpClient.GetAsync(fullUrl).ConfigureAwait(false);
-
-            if (responseMessage.Content is ByteArrayContent)
+            using (HttpResponseMessage responseMessage = await _httpClient.GetAsync(fullUrl).ConfigureAwait(false))
             {
-
+                Stream responseStreamContent = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                var streamContent = new StreamContent(responseStreamContent);
+                string file = string.Empty;
+                if (responseMessage.Content.Headers.ContentDisposition != null)
+                {
+                    file = responseMessage.Content.Headers.ContentDisposition.FileName;
+                }
+                return new Response(file, streamContent);
             }
-            if (responseMessage.Content is StringContent)
-            {
-
-            }
-            if (responseMessage.Content is StreamContent)
-            {
-
-            }
-            Stream responseStreamContent = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            StreamContent streamContent = new StreamContent(responseStreamContent);
-            string file = string.Empty;
-            if (responseMessage.Content.Headers.ContentDisposition != null)
-            {
-                file = responseMessage.Content.Headers.ContentDisposition.FileName;
-            }
-            return new Response(file, streamContent);
         }
 
-        // TODO: Make a request model for these parameters.
+        /// <summary>
+        /// To upload a subtitle, a HTTP POST request will be made to the server.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public async Task<bool> UploadSubtitle(Request request)
         {
             string endPoint = "?action=upload&hash={0}";
@@ -149,8 +153,6 @@ namespace SubDBSharp
             //Content-Disposition: form-data; name="file"; filename="subtitle.srt"
             //Content-Type: application/octet-stream
 
-
-            //[PAYLOAD]
             using (var requestMessage = Utils.BuildRequestMessage(request, endPoint, BaseAddress))
             {
                 var response = await _httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false);
