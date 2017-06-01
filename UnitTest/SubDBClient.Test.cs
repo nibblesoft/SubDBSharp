@@ -64,7 +64,7 @@ namespace SubDBSharp.Test
 
             string content = File.ReadAllText(subfile);
             var request = new Request { MovieHash = "94afe902cac852e14f2537d923ba95d7", Content = content };
-            subDbClient.UploadSubtitle(request);
+            Assert.True(subDbClient.UploadSubtitle(request).Result);
         }
 
     }
