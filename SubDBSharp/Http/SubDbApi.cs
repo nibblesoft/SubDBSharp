@@ -15,7 +15,6 @@ namespace SubDbSharp
     public class SubDbApi
     {
         public static readonly Uri SubDBApiUrl = new Uri("http://api.thesubdb.com/", UriKind.Absolute);
-        private readonly StringBuilder _paramsBuider;
         private readonly HttpClient _httpClient;
         private readonly Uri BaseAddress;
         private readonly HttpClientHandler _httpClientHandler;
@@ -30,13 +29,14 @@ namespace SubDbSharp
             {
                 throw new NullReferenceException(nameof(baseAddress));
             }
+#if !DEBUG
             // invalid host
-            if (baseAddress.Host != SubDBApiUrl.Host)
+            if (!(baseAddress.Host == SubDBApiUrl.Host)
             {
                 throw new InvalidOperationException("Host must be thesubdb");
-            }
+            } 
+#endif
             BaseAddress = baseAddress;
-            _paramsBuider = new StringBuilder();
             _httpClientHandler = new HttpClientHandler()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
@@ -86,16 +86,16 @@ namespace SubDbSharp
             using (HttpResponseMessage responseMessage = await _httpClient.GetAsync(fullUrl, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false))
             {
                 var responseBody = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string file = string.Empty;
+                string fileName = string.Empty;
                 if (responseMessage.Content.Headers.ContentDisposition != null)
                 {
-                    file = responseMessage.Content.Headers.ContentDisposition.FileName;
+                    fileName = responseMessage.Content.Headers.ContentDisposition.FileName;
                 }
                 return new Response(
                     responseMessage.StatusCode,
                     responseBody,
                     responseMessage.Headers.ToDictionary(h => h.Key, h => h.Value.First()),
-                    file);
+                    fileName);
             }
         }
 
@@ -107,7 +107,6 @@ namespace SubDbSharp
         public async Task<bool> UploadSubtitle(string file)
         {
             const string dispositionType = "form-data";
-
             using (var content = new MultipartFormDataContent("xYzZY"))
             {
                 // hash info
@@ -128,12 +127,13 @@ namespace SubDbSharp
                 };
                 streamContent.Headers.ContentDisposition = dispo;
 
+                // add contents to form
                 content.Add(stringContent);
                 content.Add(streamContent);
 
-                Uri fullUrl = new Uri("http://sandbox.thesubdb.com/?action=upload");
+                var uriBuilder = new UriBuilder(BaseAddress) { Query = "?action=upload" };
                 Console.WriteLine(_httpClient.DefaultRequestHeaders.UserAgent);
-                HttpResponseMessage response = await _httpClient.PostAsync(fullUrl, content);
+                HttpResponseMessage response = await _httpClient.PostAsync(uriBuilder.Uri, content);
 
                 return response.StatusCode == HttpStatusCode.Created;
             }

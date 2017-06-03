@@ -13,7 +13,7 @@ namespace SubDbSharp
     {
         public static string FormatUserAgent(ProductHeaderValue procInfo)
         {
-            return string.Format("{0} ({1} {2})", "SubDB/1.0", procInfo);
+            return string.Format("{0} ({1} {2})", "SubDB/1.0", procInfo, "http://github.com/ivandrofly");
         }
 
         private static readonly StringBuilder _hexBuilder = new StringBuilder();

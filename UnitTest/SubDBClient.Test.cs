@@ -57,16 +57,13 @@ namespace SubDbSharp.Test
         }
 
         [Fact]
-        public void TestUploadSubtitle()
+        public async Task TestUploadSubtitle()
         {
-            string subfile = @"./Assets/Logan.2017.en.srt";
+            string file = @"./Assets/Logan.2017.en.srt";
             //string hash = ""
             var subDbClient = new SubDbClient(GetProductInfo(), _sandBoxAddress);
-            // logan 2k17 "94afe902cac852e14f2537d923ba95d7"
-
-            string content = File.ReadAllText(subfile);
-            var request = new Request { MovieHash = "94afe902cac852e14f2537d923ba95d7", Content = content };
-            Assert.True(subDbClient.UploadSubtitle(request).Result);
+            bool isUploaded = await subDbClient.UploadSubtitleAsync(file);
+            Assert.True(isUploaded);
         }
 
         public static ProductHeaderValue GetProductInfo() => new ProductHeaderValue("UnitTest", "1.0");

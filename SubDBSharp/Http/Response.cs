@@ -6,7 +6,7 @@ namespace SubDbSharp.Http
 {
     public class Response
     {
-        public Response(HttpStatusCode statusCode, object body, IDictionary<string, string> headers, string file)
+        public Response(HttpStatusCode statusCode, object body, IDictionary<string, string> headers, string fileName)
         {
             // remove if not in httpclient 
             StatusCode = statusCode;

@@ -62,7 +62,8 @@ namespace SubDbSharp
         /// <returns></returns>
         public async Task<Response> DownloadSubtitle(string hash, params string[] languages)
         {
-            throw new NotImplementedException();
+            // TODO: build request model here
+            return await _subDbApi.DownloadSubtitle(hash, languages);
         }
 
         /// <summary>
@@ -70,9 +71,9 @@ namespace SubDbSharp
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<bool> UploadSubtitle(string file)
+        public async Task<bool> UploadSubtitleAsync(string file)
         {
-            return _subDbApi.UploadSubtitle(file);
+            return await _subDbApi.UploadSubtitle(file);
         }
 
     }
