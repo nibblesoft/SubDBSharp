@@ -1,5 +1,4 @@
-﻿using SubDBSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -10,10 +9,6 @@ namespace SubDbSharp.Models
     {
         public string MovieHash { get; set; }
         public string Content { get; set; }
-
-        public Request()
-        {
-        }
 
         public Request(string movieFile, string subtitleFile)
         {

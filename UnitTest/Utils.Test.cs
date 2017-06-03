@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using SubDbSharp;
+using System.IO;
 using Xunit;
 
 namespace SubDBSharp.Test

@@ -1,11 +1,10 @@
 ﻿using System.Globalization;
 
-namespace SubDBSharp
+namespace SubDbSharp
 {
     public class Language
     {
-        public Language(string name)
-            : this(name, 0)
+        public Language(string name) : this(name, 0)
         {
         }
 
@@ -19,10 +18,6 @@ namespace SubDBSharp
         public CultureInfo Culture { get; }
         public int Count { get; }
         public string Name { get; }
-
         public override string ToString() => Name;
-
-        public string ToStringVerbose() => $"{Culture.DisplayName}, Versions: {Count}";
-
     }
 }

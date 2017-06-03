@@ -7,10 +7,15 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace SubDBSharp
+namespace SubDbSharp
 {
     public static class Utils
     {
+        public static string FormatUserAgent(ProductHeaderValue procInfo)
+        {
+            return string.Format("{0} ({1} {2})", "SubDB/1.0", procInfo);
+        }
+
         private static readonly StringBuilder _hexBuilder = new StringBuilder();
 
         public static string GetHashString(string file)
