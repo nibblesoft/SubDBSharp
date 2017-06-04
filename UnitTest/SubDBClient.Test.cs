@@ -24,7 +24,7 @@ namespace SubDbSharp.Test
         }
 
         [Fact]
-        public void TestSearchSubtitle()
+        public static void TestSearchSubtitle()
         {
             var subDbClient = new SubDbClient(GetProductInfo(), _sandBoxAddress);
             Task<IReadOnlyList<Language>> languagues = subDbClient.SearchSubtitleAsync("ffd8d4aa68033dc03d1c8ef373b9028c", false);
@@ -34,40 +34,20 @@ namespace SubDbSharp.Test
         [Fact]
         public async Task TestDownloadSubtitle()
         {
-            //var subDbClient = new SubDbClient(GetProductInfo(), _sandBoxAddress);
-            //Task<Response> response = subDbClient.DownloadSubtitle("ffd8d4aa68033dc03d1c8ef373b9028c", "en");
-
-            //string file = "Subtitle-Downloaded.srt";
-            //if (File.Exists(file))
-            //{
-            //    File.Delete(file);
-            //}
-            //using (var fs = new FileStream("Subtitle-Downloaded.srt", FileMode.Create, FileAccess.Write))
-            //{
-            //    var buffer = new byte[1024];
-            //    int bytesRead = 0;
-            //    // TODO: Fix this hugly line...
-            //    Stream stream = response.Result.SubStream;
-            //    while ((bytesRead = stream.Read(buffer, 0, 1024)) > 0)
-            //    {
-            //        fs.Write(buffer, 0, bytesRead);
-            //    }
-            //}
-            //Assert.True(File.Exists(file));
-            //File.Delete(file);
             var subDbClient = new SubDbClient(GetProductInfo(), _sandBoxAddress);
-            string movieHash = Utils.GetHashString("./Assets/dexter.mp4");
-            var response = await subDbClient.DownloadSubtitle(movieHash, "en");
+            string movieHash = Utils.GetMovieHash("./Assets/dexter.mp4");
+            var response = await subDbClient.DownloadSubtitleAsync(movieHash, "en");
             Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
         }
 
         [Fact]
         public async Task TestUploadSubtitle()
         {
-            string file = @"./Assets/Logan.2017.en.srt";
+            string movie = "./Assets/dexter.mp4";
+            string subtitle = @"./Assets/Logan.2017.en.srt";
             //string hash = ""
             var subDbClient = new SubDbClient(GetProductInfo(), _sandBoxAddress);
-            bool isUploaded = await subDbClient.UploadSubtitleAsync(file);
+            bool isUploaded = await subDbClient.UploadSubtitleAsync(subtitle, movie);
             Assert.True(isUploaded);
         }
 

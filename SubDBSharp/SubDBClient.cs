@@ -46,6 +46,7 @@ namespace SubDbSharp
             return _responseParser.ParseGetAvailablesLanguages(response);
         }
 
+        // TODO: Remove async suffix in this method.
         /// <summary>
         /// To list the available subtitle languages for a given hash, a HTTP GET request will be made to the server.
         /// </summary>
@@ -65,7 +66,7 @@ namespace SubDbSharp
         /// <param name="languages"> The parameter language can be a single language code (ex.: us), or a comma separated list in order of priority (ex.: us,nl).
         /// //When using a comma separated list, the first subtitle found is returned.</param>
         /// <returns></returns>
-        public async Task<Response> DownloadSubtitle(string hash, params string[] languages)
+        public async Task<Response> DownloadSubtitleAsync(string hash, params string[] languages)
         {
             return await _subDbApi.DownloadSubtitle(hash, languages);
         }
@@ -75,9 +76,9 @@ namespace SubDbSharp
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<bool> UploadSubtitleAsync(string file)
+        public async Task<bool> UploadSubtitleAsync(string subtitle, string movie)
         {
-            return await _subDbApi.UploadSubtitle(file);
+            return await _subDbApi.UploadSubtitle(subtitle, movie);
         }
 
     }

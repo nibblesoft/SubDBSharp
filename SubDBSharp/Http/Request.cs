@@ -20,7 +20,7 @@ namespace SubDbSharp.Models
             {
                 throw new FileNotFoundException(movieFile);
             }
-            MovieHash = Utils.GetHashString(movieFile);
+            MovieHash = Utils.GetMovieHash(movieFile);
             Content = File.ReadAllText(subtitleFile, Encoding.UTF8);
         }
 

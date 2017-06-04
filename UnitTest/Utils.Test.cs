@@ -17,7 +17,7 @@ namespace SubDBSharp.Test
             {
                 throw new FileNotFoundException("dexter.mp4");
             }
-            string hashString = Utils.GetHashString(path);
+            string hashString = Utils.GetMovieHash(path);
             Assert.Equal(expected, hashString);
         }
     }

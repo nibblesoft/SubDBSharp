@@ -18,7 +18,7 @@ namespace SubDbSharp
 
         private static readonly StringBuilder _hexBuilder = new StringBuilder();
 
-        public static string GetHashString(string file)
+        public static string GetMovieHash(string file)
         {
             int bytesToRead = 64 * 1024;
             using (var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))

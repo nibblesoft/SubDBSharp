@@ -104,26 +104,26 @@ namespace SubDbSharp
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<bool> UploadSubtitle(string file)
+        public async Task<bool> UploadSubtitle(string subtitle, string movie)
         {
             const string dispositionType = "form-data";
             using (var content = new MultipartFormDataContent("xYzZY"))
             {
                 // hash info
-                StringContent stringContent = stringContent = new StringContent(Utils.GetHashString(file));
+                StringContent stringContent = stringContent = new StringContent(Utils.GetMovieHash(movie));
                 stringContent.Headers.ContentDisposition = new ContentDispositionHeaderValue(dispositionType)
                 {
                     Name = "\"hash\""
                 };
 
                 // subtitle file info
-                FileStream fs = File.OpenRead(file);
+                FileStream fs = File.OpenRead(subtitle);
                 var streamContent = new StreamContent(fs);
                 streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
                 var dispo = new ContentDispositionHeaderValue(dispositionType)
                 {
                     Name = "\"file\"",
-                    FileName = $"\"{Path.GetFileName(file)}\""
+                    FileName = $"\"{Path.GetFileName(subtitle)}\""
                 };
                 streamContent.Headers.ContentDisposition = dispo;
 
