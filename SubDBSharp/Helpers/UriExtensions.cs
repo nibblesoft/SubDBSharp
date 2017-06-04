@@ -79,7 +79,11 @@ namespace SubDbSharp
             var sb = new StringBuilder($"?action=download&hash={hash}&language=");
             foreach (string lang in languages)
             {
-                sb.AppendFormat(",{0},", lang);
+                sb.AppendFormat($"{lang}", lang);
+            }
+            if (languages.Length > 1)
+            {
+                sb.Remove(sb.Length - 1, 1);
             }
             string query = sb.ToString();
             var uriBuilder = new UriBuilder(uri)

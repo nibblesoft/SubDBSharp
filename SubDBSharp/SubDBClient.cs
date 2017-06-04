@@ -3,6 +3,7 @@ using SubDbSharp.Http;
 using SubDbSharp.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
@@ -35,6 +36,10 @@ namespace SubDbSharp
 
         #endregion
 
+        /// <summary>
+        /// Lists the languages of all subtitles currenttly available in database.
+        /// </summary>
+        /// <returns></returns>
         public async Task<IReadOnlyList<Language>> GetLanguagesAvailableAsync()
         {
             string response = await _subDbApi.GetLanguagesAvailableAsync().ConfigureAwait(false);
@@ -62,7 +67,6 @@ namespace SubDbSharp
         /// <returns></returns>
         public async Task<Response> DownloadSubtitle(string hash, params string[] languages)
         {
-            // TODO: build request model here
             return await _subDbApi.DownloadSubtitle(hash, languages);
         }
 

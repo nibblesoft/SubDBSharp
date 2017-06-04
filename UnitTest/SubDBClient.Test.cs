@@ -4,6 +4,7 @@ using SubDbSharp.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xunit;
@@ -31,7 +32,7 @@ namespace SubDbSharp.Test
         }
 
         [Fact]
-        public void TestDownloadSubtitle()
+        public async Task TestDownloadSubtitle()
         {
             //var subDbClient = new SubDbClient(GetProductInfo(), _sandBoxAddress);
             //Task<Response> response = subDbClient.DownloadSubtitle("ffd8d4aa68033dc03d1c8ef373b9028c", "en");
@@ -54,6 +55,10 @@ namespace SubDbSharp.Test
             //}
             //Assert.True(File.Exists(file));
             //File.Delete(file);
+            var subDbClient = new SubDbClient(GetProductInfo(), _sandBoxAddress);
+            string movieHash = Utils.GetHashString("./Assets/dexter.mp4");
+            var response = await subDbClient.DownloadSubtitle(movieHash, "en");
+            Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
         }
 
         [Fact]

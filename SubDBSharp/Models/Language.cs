@@ -10,7 +10,6 @@ namespace SubDbSharp
 
         public Language(string name, int count)
         {
-            Culture = new CultureInfo(name);
             Name = Culture.TwoLetterISOLanguageName;
             Count = count;
         }
