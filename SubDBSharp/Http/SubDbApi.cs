@@ -131,10 +131,8 @@ namespace SubDbSharp
                 content.Add(stringContent);
                 content.Add(streamContent);
 
-                var uriBuilder = new UriBuilder(BaseAddress) { Query = "?action=upload" };
-                Console.WriteLine(_httpClient.DefaultRequestHeaders.UserAgent);
+                var uriBuilder = new UriBuilder(BaseAddress) { Query = "action=upload" };
                 HttpResponseMessage response = await _httpClient.PostAsync(uriBuilder.Uri, content);
-
                 return response.StatusCode == HttpStatusCode.Created;
             }
         }

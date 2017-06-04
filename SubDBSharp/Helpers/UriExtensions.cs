@@ -60,7 +60,7 @@ namespace SubDbSharp
 
         public static Uri ApplySearchSubtitleParameters(this Uri uri, string hash, bool getVersions)
         {
-            string query = $"?action=search&hash={hash}";
+            string query = $"action=search&hash={hash}";
             if (getVersions)
             {
                 query += $"&versions";
@@ -76,16 +76,8 @@ namespace SubDbSharp
         {
             // en,es,fr,it,nl,pl,pt,ro,sv,tr
 
-            var sb = new StringBuilder($"?action=download&hash={hash}&language=");
-            foreach (string lang in languages)
-            {
-                sb.AppendFormat($"{lang}", lang);
-            }
-            if (languages.Length > 1)
-            {
-                sb.Remove(sb.Length - 1, 1);
-            }
-            string query = sb.ToString();
+            var sb = new StringBuilder($"action=download&hash={hash}&language=");
+            string query = sb.ToString() + string.Join(",", languages);
             var uriBuilder = new UriBuilder(uri)
             {
                 Query = query
