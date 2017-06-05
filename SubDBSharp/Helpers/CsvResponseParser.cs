@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SubDbSharp.Helpers
 {
-    class CsvResponseParser : IResponseParser
+    public class CsvResponseParser : IResponseParser
     {
         public IReadOnlyList<Language> ParseGetAvailablesLanguages(string response)
         {

@@ -49,12 +49,12 @@ namespace SubDbSharp
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", Utils.FormatUserAgent(productInformation));
         }
 
-        public async Task<string> GetLanguagesAvailableAsync()
+        public async Task<Response> GetLanguagesAvailableAsync()
         {
             var uriBuilder = new UriBuilder(BaseAddress) { Query = "?action=languages" };
-            using (HttpResponseMessage response = await _httpClient.GetAsync(uriBuilder.Uri).ConfigureAwait(false))
+            using (HttpResponseMessage responseMessage = await _httpClient.GetAsync(uriBuilder.Uri).ConfigureAwait(false))
             {
-                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return await BuildResponse(responseMessage);
             }
         }
 
@@ -64,12 +64,13 @@ namespace SubDbSharp
         /// <param name="hash">The parameter hash is the hash of the video file, generated using our hash function.</param>
         /// <param name="getVersions">This parameter is optional. Using it to return how many versions per language of a subtitle we have in our database.</param>
         /// <returns></returns>
-        public async Task<string> SearchSubtitle(string hash, bool getVersions = false)
+        public async Task<Response> SearchSubtitle(string hash, bool getVersions = false)
         {
             var fullUrl = SubDBApiUrl.ApplySearchSubtitleParameters(hash, getVersions);
-            using (var response = await _httpClient.GetAsync(fullUrl).ConfigureAwait(false))
+            using (HttpResponseMessage resonseMessage = await _httpClient.GetAsync(fullUrl).ConfigureAwait(false))
             {
-                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                //return await resonseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return await BuildResponse(resonseMessage);
             };
         }
 
@@ -85,17 +86,22 @@ namespace SubDbSharp
             var fullUrl = SubDBApiUrl.ApplyDownloadSubtitleParameters(hash, languages);
             using (HttpResponseMessage responseMessage = await _httpClient.GetAsync(fullUrl, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false))
             {
-                var responseBody = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                string fileName = string.Empty;
-                if (responseMessage.Content.Headers.ContentDisposition != null)
-                {
-                    fileName = responseMessage.Content.Headers.ContentDisposition.FileName;
-                }
-                return new Response(
-                    responseMessage.StatusCode,
-                    responseBody,
-                    responseMessage.Headers.ToDictionary(h => h.Key, h => h.Value.First()),
-                    fileName);
+                //var responseBody = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                //string fileName = string.Empty;
+                //if (responseMessage.Content.Headers.ContentDisposition != null)
+                //{
+                //    fileName = responseMessage.Content.Headers.ContentDisposition.FileName;
+                //}
+#if DEBUG
+                // according to website "the language of the downloaded subtitle is returned in the
+                // content-language field in the header of the response" but it seems to not work :(...
+                //if (responseMessage.Content.Headers.ContentLanguage.Any())
+                //{
+                //    // todo: retrive languge.
+                //    // note: this is only usefull if several languages were passed in languages parameter
+                //}
+#endif
+                return await BuildResponse(responseMessage);
             }
         }
 
@@ -104,7 +110,7 @@ namespace SubDbSharp
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<bool> UploadSubtitle(string subtitle, string movie)
+        public async Task<Response> UploadSubtitle(string subtitle, string movie)
         {
             const string dispositionType = "form-data";
             using (var content = new MultipartFormDataContent("xYzZY"))
@@ -132,8 +138,10 @@ namespace SubDbSharp
                 content.Add(streamContent);
 
                 var uriBuilder = new UriBuilder(BaseAddress) { Query = "action=upload" };
-                HttpResponseMessage response = await _httpClient.PostAsync(uriBuilder.Uri, content);
-                return response.StatusCode == HttpStatusCode.Created;
+                using (HttpResponseMessage response = await _httpClient.PostAsync(uriBuilder.Uri, content))
+                {
+                    return await BuildResponse(response);
+                }
             }
         }
 
@@ -145,15 +153,18 @@ namespace SubDbSharp
 
         protected virtual async Task<Response> BuildResponse(HttpResponseMessage responseMessage)
         {
-            object responseBody = null;
+            string responseBody = null;
             using (var content = responseMessage.Content)
             {
                 if (content != null)
                 {
-
+                    // get can be more processing like getting the metia type before reading
+                    // the content information, but subdb always return string
+                    responseBody = await content.ReadAsStringAsync().ConfigureAwait(false);
                 }
             }
-            return null;
+            return new Response(responseMessage.StatusCode, responseBody,
+                responseMessage.Headers.ToDictionary(h => h.Key, h => h.Value.First()));
         }
 
     }
