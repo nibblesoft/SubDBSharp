@@ -31,10 +31,10 @@ namespace SubDbSharp
             }
 #if !DEBUG
             // invalid host
-            if (!(baseAddress.Host == SubDBApiUrl.Host)
+            if (!(baseAddress.Host == SubDBApiUrl.Host))
             {
                 throw new InvalidOperationException("Host must be thesubdb");
-            } 
+            }
 #endif
             BaseAddress = baseAddress;
             _httpClientHandler = new HttpClientHandler()
