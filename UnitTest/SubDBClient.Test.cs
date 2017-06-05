@@ -45,7 +45,6 @@ namespace SubDbSharp.Test
         {
             string movie = "./Assets/dexter.mp4";
             string subtitle = @"./Assets/Logan.2017.en.srt";
-            //string hash = ""
             var subDbClient = new SubDbClient(GetProductInfo(), _sandBoxAddress);
             var response = await subDbClient.UploadSubtitleAsync(subtitle, movie);
             Assert.True(response.StatusCode == System.Net.HttpStatusCode.Created);

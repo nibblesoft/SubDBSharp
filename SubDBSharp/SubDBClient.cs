@@ -43,10 +43,8 @@ namespace SubDbSharp
         public Task<Response> GetLanguagesAvailableAsync()
         {
             return _subDbApi.GetLanguagesAvailableAsync();
-            //return _responseParser.ParseGetAvailablesLanguages(response);
         }
 
-        // TODO: Remove async suffix in this method.
         /// <summary>
         /// To list the available subtitle languages for a given hash, a HTTP GET request will be made to the server.
         /// </summary>
@@ -56,7 +54,6 @@ namespace SubDbSharp
         public Task<Response> SearchSubtitleAsync(string hash, bool getVersions)
         {
             return _subDbApi.SearchSubtitle(hash, getVersions);
-            //return _responseParser.ParseGetAvailablesLanguages(response);
         }
 
         /// <summary>

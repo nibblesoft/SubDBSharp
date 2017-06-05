@@ -16,8 +16,6 @@ namespace SubDbSharp
             return string.Format("{0} ({1} {2})", "SubDB/1.0", procInfo, "http://github.com/ivandrofly");
         }
 
-        private static readonly StringBuilder _hexBuilder = new StringBuilder();
-
         public static string GetMovieHash(string file)
         {
             int bytesToRead = 64 * 1024;
@@ -40,46 +38,12 @@ namespace SubDbSharp
 
         public static string ToHexadecimal(byte[] bytes)
         {
-            _hexBuilder.Length = 0;
+            var _hexBuilder = new StringBuilder();
             for (int i = 0; i < bytes.Length; i++)
             {
                 _hexBuilder.Append(bytes[i].ToString("x2"));
             }
             return _hexBuilder.ToString();
-        }
-
-        internal static HttpRequestMessage BuildRequestMessage(Request request, string endPoint, Uri subDBApiUrl)
-        {
-            // PAYLOAD
-            string boundaryFormat = @"--xYzZY
-Content-Disposition: form-data; name=""hash""
-
-{0}
---xYzZY
-Content-Disposition: form-data; name=""file""; filename=""{0}.srt""
-Content-Type: application/octet-stream
-Content-Transfer-Encoding: binary
-
-{1}
-
---xYzZY
-";
-            // Uri
-            Uri uri = new Uri(string.Format(endPoint, request.MovieHash), UriKind.Relative);
-            Uri fullUrl = new Uri(subDBApiUrl, uri);
-
-            string body = string.Format(boundaryFormat, request, request.Content);
-            StringContent stringContent = new StringContent(body, Encoding.UTF8);
-            stringContent.Headers.ContentType = new MediaTypeHeaderValue("multipart/form-data");
-            stringContent.Headers.ContentType.Parameters.Add(new NameValueHeaderValue("boundary", "xYzZY"));
-
-            // Request message
-            return new HttpRequestMessage()
-            {
-                Method = HttpMethod.Post,
-                RequestUri = fullUrl,
-                Content = stringContent
-            };
         }
 
     }
