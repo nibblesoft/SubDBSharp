@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubDbSharp", "SubDbSharp\SubDbSharp.csproj", "{BEEF17C9-2572-4D6F-B339-B7B2C6D94028}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{A8791B2B-B148-47BA-9B9D-A9A2163CCA48}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubDBSharp", "src\SubDBSharp.csproj", "{17AC5013-168E-4C2A-82E9-9460D49934C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BEEF17C9-2572-4D6F-B339-B7B2C6D94028}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BEEF17C9-2572-4D6F-B339-B7B2C6D94028}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BEEF17C9-2572-4D6F-B339-B7B2C6D94028}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BEEF17C9-2572-4D6F-B339-B7B2C6D94028}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A8791B2B-B148-47BA-9B9D-A9A2163CCA48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A8791B2B-B148-47BA-9B9D-A9A2163CCA48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8791B2B-B148-47BA-9B9D-A9A2163CCA48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8791B2B-B148-47BA-9B9D-A9A2163CCA48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17AC5013-168E-4C2A-82E9-9460D49934C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17AC5013-168E-4C2A-82E9-9460D49934C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17AC5013-168E-4C2A-82E9-9460D49934C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17AC5013-168E-4C2A-82E9-9460D49934C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
