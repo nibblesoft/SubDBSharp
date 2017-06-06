@@ -1,7 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
+    <Copyright>Copyright ©  2017</Copyright>
+    <PackageProjectUrl>https://github.com/nibblesoft/SubDBSharp</PackageProjectUrl>
+    <Description>C# implementation of http://thesubdb.com/api/</Description>
+    <Version>1.0.1</Version>
+    <PackageTags>subdb subtitleapi subdbapi thesubdb ivandrofly ivandro ismael</PackageTags>
+    <RepositoryUrl>https://github.com/nibblesoft/SubDBSharp</RepositoryUrl>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
 </Project>
