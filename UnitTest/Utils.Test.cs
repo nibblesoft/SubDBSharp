@@ -1,4 +1,4 @@
-﻿using SubDbSharp;
+﻿using SubDBSharp;
 using System.IO;
 using Xunit;
 

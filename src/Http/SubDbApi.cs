@@ -1,5 +1,5 @@
-﻿using SubDbSharp.Http;
-using SubDbSharp.Models;
+﻿using SubDBSharp.Http;
+using SubDBSharp.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,20 +10,20 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SubDbSharp
+namespace SubDBSharp
 {
-    public class SubDbApi
+    public class SubDBApi
     {
         public static readonly Uri SubDBApiUrl = new Uri("http://api.thesubdb.com/", UriKind.Absolute);
         private readonly HttpClient _httpClient;
         private readonly Uri BaseAddress;
         private readonly HttpClientHandler _httpClientHandler;
 
-        public SubDbApi(ProductHeaderValue productInformation) : this(productInformation, SubDBApiUrl)
+        public SubDBApi(ProductHeaderValue productInformation) : this(productInformation, SubDBApiUrl)
         {
         }
 
-        public SubDbApi(ProductHeaderValue productInformation, Uri baseAddress)
+        public SubDBApi(ProductHeaderValue productInformation, Uri baseAddress)
         {
             if (baseAddress == null)
             {

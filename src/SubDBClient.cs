@@ -1,35 +1,32 @@
-﻿using SubDbSharp.Helpers;
-using SubDbSharp.Http;
-using SubDbSharp.Models;
+﻿using SubDBSharp.Helpers;
+using SubDBSharp.Http;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace SubDbSharp
+namespace SubDBSharp
 {
-    public class SubDbClient
+    public class SubDBClient
     {
-        private readonly SubDbApi _subDbApi;
+        private readonly SubDBApi _subDbApi;
         private readonly IResponseParser _responseParser;
 
         #region Constuctors
 
-        public SubDbClient(ProductHeaderValue productInformation)
+        public SubDBClient(ProductHeaderValue productInformation)
             : this(productInformation, null)
         {
         }
 
-        public SubDbClient(ProductHeaderValue productInformation, Uri baseAddress)
+        public SubDBClient(ProductHeaderValue productInformation, Uri baseAddress)
         {
             if (baseAddress == null)
             {
-                _subDbApi = new SubDbApi(productInformation);
+                _subDbApi = new SubDBApi(productInformation);
             }
             else
             {
-                _subDbApi = new SubDbApi(productInformation, baseAddress);
+                _subDbApi = new SubDBApi(productInformation, baseAddress);
             }
             _responseParser = new CsvResponseParser();
         }

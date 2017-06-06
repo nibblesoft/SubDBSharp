@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace SubDbSharp.Http
+namespace SubDBSharp.Http
 {
     public class RequestNew
     {

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace SubDbSharp
+namespace SubDBSharp
 {
     public class Language
     {

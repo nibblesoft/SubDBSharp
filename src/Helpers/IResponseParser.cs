@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SubDbSharp.Helpers
+namespace SubDBSharp.Helpers
 {
     public interface IResponseParser
     {

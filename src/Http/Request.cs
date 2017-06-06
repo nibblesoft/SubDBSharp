@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace SubDbSharp.Models
+namespace SubDBSharp.Models
 {
     public class Request
     {

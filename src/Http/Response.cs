@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Net;
 
-namespace SubDbSharp.Http
+namespace SubDBSharp.Http
 {
     public class Response
     {
