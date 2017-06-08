@@ -15,7 +15,7 @@ namespace SubDBSharp.Test
         public async Task TestAvailableLanguages()
         {
             var subDbClient = new SubDBClient(GetProductInfo());
-            var response = await subDbClient.GetLanguagesAvailableAsync();
+            var response = await subDbClient.GetAvailableLanguagesAsync();
             Assert.NotNull(response.Body);
             var availableLanguages = _reponseParser.ParseGetAvailablesLanguages(response.Body);
             Assert.True(availableLanguages.Count > 0);

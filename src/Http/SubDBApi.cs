@@ -47,7 +47,7 @@ namespace SubDBSharp
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", Utils.FormatUserAgent(productInformation));
         }
 
-        public async Task<Response> GetLanguagesAvailableAsync()
+        public async Task<Response> GetAvailableLanguagesAsync()
         {
             var uriBuilder = new UriBuilder(BaseAddress) { Query = "action=languages" };
             using (HttpResponseMessage responseMessage = await _httpClient.GetAsync(uriBuilder.Uri).ConfigureAwait(false))

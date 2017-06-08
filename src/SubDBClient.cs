@@ -37,9 +37,9 @@ namespace SubDBSharp
         /// Lists the languages of all subtitles currenttly available in database.
         /// </summary>
         /// <returns></returns>
-        public Task<Response> GetLanguagesAvailableAsync()
+        public Task<Response> GetAvailableLanguagesAsync()
         {
-            return _subDbApi.GetLanguagesAvailableAsync();
+            return _subDbApi.GetAvailableLanguagesAsync();
         }
 
         /// <summary>
