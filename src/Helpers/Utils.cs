@@ -1,10 +1,6 @@
-﻿using SubDBSharp.Models;
-using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
+﻿using System.IO;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace SubDBSharp
@@ -20,7 +16,7 @@ namespace SubDBSharp
         {
             int bytesToRead = 64 * 1024;
             using (var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            using (var md5 = System.Security.Cryptography.MD5.Create())
+            using (var md5 = MD5.Create())
             {
                 int len = (int)fs.Length;
                 byte[] buffer = new byte[bytesToRead * 2];

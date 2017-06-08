@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace SubDBSharp
+﻿namespace SubDBSharp
 {
     public class Language
     {
@@ -14,7 +12,6 @@ namespace SubDBSharp
             Count = count;
         }
 
-        public CultureInfo Culture { get; }
         public int Count { get; }
         public string Name { get; }
         public override string ToString() => Name;
