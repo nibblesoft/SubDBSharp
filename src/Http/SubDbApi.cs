@@ -49,7 +49,7 @@ namespace SubDBSharp
 
         public async Task<Response> GetLanguagesAvailableAsync()
         {
-            var uriBuilder = new UriBuilder(BaseAddress) { Query = "?action=languages" };
+            var uriBuilder = new UriBuilder(BaseAddress) { Query = "action=languages" };
             using (HttpResponseMessage responseMessage = await _httpClient.GetAsync(uriBuilder.Uri).ConfigureAwait(false))
             {
                 return await BuildResponse(responseMessage);
