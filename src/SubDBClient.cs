@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SubDBSharp
 {
-    public class SubDBClient
+    public class SubDBClient : IDisposable
     {
         private readonly SubDBApi _subDbApi;
         private readonly IResponseParser _responseParser;
@@ -75,5 +75,9 @@ namespace SubDBSharp
             return _subDbApi.UploadSubtitle(subtitle, movie);
         }
 
+        public void Dispose()
+        {
+            _subDbApi?.Dispose();
+        }
     }
 }

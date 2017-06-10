@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SubDBSharp
 {
-    public class SubDBApi
+    public class SubDBApi : IDisposable
     {
         public static readonly Uri SubDBApiUrl = new Uri("http://api.thesubdb.com/", UriKind.Absolute);
         private readonly HttpClient _httpClient;
@@ -39,7 +39,7 @@ namespace SubDBSharp
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             };
-            _httpClient = new HttpClient(_httpClientHandler);
+            _httpClient = new HttpClient(_httpClientHandler, true);
 
             // we can't go with this logic because the User-Agent must contain implementor url (information)
             //_httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(productInformation));
@@ -50,10 +50,8 @@ namespace SubDBSharp
         public Task<Response> GetAvailableLanguagesAsync()
         {
             var uriBuilder = new UriBuilder(BaseAddress) { Query = "action=languages" };
-            using (HttpRequestMessage requestMessage = BuildRequestMessage(uriBuilder.Uri, HttpMethod.Get, null))
-            {
-                return SendDataAsync(requestMessage);
-            }
+            Request request = BuildRequest(uriBuilder.Uri, HttpMethod.Get, null);
+            return SendDataAsync(request);
         }
 
         /// <summary>
@@ -65,10 +63,8 @@ namespace SubDBSharp
         public Task<Response> SearchSubtitle(string hash, bool getVersions = false)
         {
             var fullUrl = SubDBApiUrl.ApplySearchSubtitleParameters(hash, getVersions);
-            using (HttpRequestMessage requestMessage = BuildRequestMessage(fullUrl, HttpMethod.Get, null))
-            {
-                return SendDataAsync(requestMessage);
-            }
+            Request request = BuildRequest(fullUrl, HttpMethod.Get, null);
+            return SendDataAsync(request);
         }
 
         /// <summary>
@@ -81,10 +77,8 @@ namespace SubDBSharp
         public Task<Response> DownloadSubtitle(string hash, params string[] languages)
         {
             var fullUrl = SubDBApiUrl.ApplyDownloadSubtitleParameters(hash, languages);
-            using (var requestMessage = BuildRequestMessage(fullUrl, HttpMethod.Get, null))
-            {
-                return SendDataAsync(requestMessage);
-            }
+            Request request = BuildRequest(fullUrl, HttpMethod.Get, null);
+            return SendDataAsync(request);
         }
 
         /// <summary>
@@ -95,29 +89,27 @@ namespace SubDBSharp
         public Task<Response> UploadSubtitle(string subtitle, string movie)
         {
             var uriBuilder = new UriBuilder(BaseAddress) { Query = "action=upload" };
-            using (HttpContent httpContent = CreateFormContent(subtitle, movie))
-            using (HttpRequestMessage httpRequestMessage = BuildRequestMessage(uriBuilder.Uri, HttpMethod.Post, httpContent))
-            {
-                return SendDataAsync(httpRequestMessage);
-            }
+            Request request = BuildRequest(uriBuilder.Uri, HttpMethod.Post, CreateFormContent(subtitle, movie));
+            return SendDataAsync(request);
         }
 
-        // ALL THE METHOD MUST GO THROUGH THIS!!!
-        private async Task<Response> SendDataAsync(HttpRequestMessage requestMessage)
+        // ALL THE REQUEST MUST TO THROUGH THIS METHOD!!!
+        private async Task<Response> SendDataAsync(Request request)
         {
+            using (HttpRequestMessage requestMessage = BuildRequestMessage(request))
             using (HttpResponseMessage responseMessage = await _httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false))
             {
                 return await BuildResponse(responseMessage);
             }
         }
 
-        protected virtual HttpRequestMessage BuildRequestMessage(Uri endPoint, HttpMethod httpMethod, HttpContent content)
+        protected virtual HttpRequestMessage BuildRequestMessage(Request request)
         {
             return new HttpRequestMessage()
             {
-                RequestUri = endPoint,
-                Method = httpMethod,
-                Content = content
+                RequestUri = request.EndPoint,
+                Method = request.Method,
+                Content = request.Body
             };
         }
 
@@ -137,9 +129,15 @@ namespace SubDBSharp
                 responseMessage.Headers.ToDictionary(h => h.Key, h => h.Value.First()));
         }
 
+        protected virtual Request BuildRequest(Uri endPoint, HttpMethod method, HttpContent body)
+        {
+            return new Request(endPoint, method, body);
+        }
+
         private static HttpContent CreateFormContent(string subtitle, string movie)
         {
             const string dispositionType = "form-data";
+
             var content = new MultipartFormDataContent("xYzZY");
 
             // hash info
@@ -165,6 +163,13 @@ namespace SubDBSharp
             content.Add(streamContent);
 
             return content;
+        }
+
+        public void Dispose()
+        {
+            // will dispose _handler aswell (mentioned in contructor)
+            _httpClient.Dispose();
+            //_httpClientHandler.Dispose();
         }
     }
 }

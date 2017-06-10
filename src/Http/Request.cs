@@ -1,26 +1,19 @@
-﻿using System.IO;
-using System.Text;
+﻿using System;
+using System.Net.Http;
 
 namespace SubDBSharp.Models
 {
     public class Request
     {
-        public string MovieHash { get; set; }
-        public string Content { get; set; }
-
-        public Request(string movieFile, string subtitleFile)
+        public Request(Uri endpoint, HttpMethod method, HttpContent content)
         {
-            if (File.Exists(movieFile))
-            {
-                throw new FileNotFoundException(movieFile);
-            }
-            if (File.Exists(subtitleFile))
-            {
-                throw new FileNotFoundException(movieFile);
-            }
-            MovieHash = Utils.GetMovieHash(movieFile);
-            Content = File.ReadAllText(subtitleFile, Encoding.UTF8);
+            EndPoint = endpoint;
+            Method = method;
+            Body = content;
         }
 
+        public Uri EndPoint { get; }
+        public HttpMethod Method { get; }
+        public HttpContent Body { get; }
     }
 }
