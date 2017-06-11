@@ -12,28 +12,17 @@ namespace SubDBSharp
 {
     public class SubDBApi : IDisposable
     {
-        public static readonly Uri SubDBApiUrl = new Uri("http://api.thesubdb.com/", UriKind.Absolute);
         private readonly HttpClient _httpClient;
         private readonly Uri BaseAddress;
         private readonly HttpClientHandler _httpClientHandler;
 
-        public SubDBApi(ProductHeaderValue productInformation) : this(productInformation, SubDBApiUrl)
-        {
-        }
-
+        /// <summary>
+        /// During development and for tests purposes, please use http://sandbox.thesubdb.com/ as the API url.
+        /// </summary>
+        /// <param name="productInformation">Product information</param>
+        /// <param name="baseAddress">Base address (endpoint)</param>
         public SubDBApi(ProductHeaderValue productInformation, Uri baseAddress)
         {
-            if (baseAddress == null)
-            {
-                throw new NullReferenceException(nameof(baseAddress));
-            }
-#if !DEBUG
-            // invalid host
-            if (!(baseAddress.Host == SubDBApiUrl.Host))
-            {
-                throw new InvalidOperationException("Host must be thesubdb");
-            }
-#endif
             BaseAddress = baseAddress;
             _httpClientHandler = new HttpClientHandler()
             {
@@ -62,7 +51,7 @@ namespace SubDBSharp
         /// <returns></returns>
         public Task<Response> SearchSubtitle(string hash, bool getVersions = false)
         {
-            var fullUrl = SubDBApiUrl.ApplySearchSubtitleParameters(hash, getVersions);
+            var fullUrl = BaseAddress.ApplySearchSubtitleParameters(hash, getVersions);
             Request request = BuildRequest(fullUrl, HttpMethod.Get, null);
             return SendDataAsync(request);
         }
@@ -76,7 +65,7 @@ namespace SubDBSharp
         /// <returns></returns>
         public Task<Response> DownloadSubtitle(string hash, params string[] languages)
         {
-            var fullUrl = SubDBApiUrl.ApplyDownloadSubtitleParameters(hash, languages);
+            var fullUrl = BaseAddress.ApplyDownloadSubtitleParameters(hash, languages);
             Request request = BuildRequest(fullUrl, HttpMethod.Get, null);
             return SendDataAsync(request);
         }

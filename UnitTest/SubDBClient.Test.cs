@@ -8,13 +8,12 @@ namespace SubDBSharp.Test
 {
     public class UnitTest
     {
-        private static readonly Uri _sandBoxAddress = new Uri("http://sandbox.thesubdb.com/");
         private static readonly IResponseParser _reponseParser = new CsvResponseParser();
 
         [Fact]
         public async Task TestAvailableLanguages()
         {
-            var subDbClient = new SubDBClient(GetProductInfo());
+            var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
             var response = await subDbClient.GetAvailableLanguagesAsync();
             Assert.NotNull(response.Body);
             var availableLanguages = _reponseParser.ParseGetAvailablesLanguages(response.Body);
@@ -24,7 +23,7 @@ namespace SubDBSharp.Test
         [Fact]
         public async Task TestSearchSubtitle()
         {
-            var subDbClient = new SubDBClient(GetProductInfo(), _sandBoxAddress);
+            var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
             var response = await subDbClient.SearchSubtitleAsync("ffd8d4aa68033dc03d1c8ef373b9028c", false);
             Assert.NotNull(response.Body);
             var availableLanguages = _reponseParser.ParseGetAvailablesLanguages(response.Body);
@@ -34,7 +33,7 @@ namespace SubDBSharp.Test
         [Fact]
         public async Task TestDownloadSubtitle()
         {
-            var subDbClient = new SubDBClient(GetProductInfo(), _sandBoxAddress);
+            var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
             string movieHash = Utils.GetMovieHash("./Assets/dexter.mp4");
             var response = await subDbClient.DownloadSubtitleAsync(movieHash, "en");
             Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
@@ -45,7 +44,7 @@ namespace SubDBSharp.Test
         {
             string movie = "./Assets/dexter.mp4";
             string subtitle = @"./Assets/Logan.2017.en.srt";
-            var subDbClient = new SubDBClient(GetProductInfo(), _sandBoxAddress);
+            var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
             var response = await subDbClient.UploadSubtitleAsync(subtitle, movie);
             Assert.True(response.StatusCode == System.Net.HttpStatusCode.Created);
         }

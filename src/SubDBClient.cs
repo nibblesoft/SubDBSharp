@@ -14,20 +14,14 @@ namespace SubDBSharp
         #region Constuctors
 
         public SubDBClient(ProductHeaderValue productInformation)
-            : this(productInformation, null)
+            : this(productInformation, ApiUrls.SubDBApiUrl)
         {
         }
 
         public SubDBClient(ProductHeaderValue productInformation, Uri baseAddress)
         {
-            if (baseAddress == null)
-            {
-                _subDbApi = new SubDBApi(productInformation);
-            }
-            else
-            {
-                _subDbApi = new SubDBApi(productInformation, baseAddress);
-            }
+            baseAddress = baseAddress ?? ApiUrls.SubDBApiUrl;
+            _subDbApi = new SubDBApi(productInformation, baseAddress);
             _responseParser = new CsvResponseParser();
         }
 
