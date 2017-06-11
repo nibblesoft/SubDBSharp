@@ -1,20 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.4</TargetFramework>
+    <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
+    <AssemblyTitle>SubDBSharp</AssemblyTitle>
+    <Title>SubDBSharp</Title>
+    <PackageId>SubDBSharp</PackageId>
+    <Authors>Ivandro Ismael</Authors>
+    <Company>NibbleSoft</Company>
     <Copyright>Copyright ©  2017 Ivandrofly</Copyright>
     <PackageProjectUrl>https://github.com/nibblesoft/SubDBSharp</PackageProjectUrl>
     <Description>C# implementation of http://thesubdb.com/api/</Description>
-    <Version>1.0.2</Version>
+    <Version>1.0.4</Version>
     <PackageTags>subdb subtitleapi subdbapi thesubdb ivandrofly ivandro ismael</PackageTags>
     <RepositoryUrl>https://github.com/nibblesoft/SubDBSharp</RepositoryUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-  
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Reference Include="System.Net.Http" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  
+
 </Project>
