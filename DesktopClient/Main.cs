@@ -1,18 +1,14 @@
-﻿using System;
+﻿using DesktopClient.Helpers;
+using DesktopClient.Models;
+using SubDBSharp;
+using SubDBSharp.Http;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using SubDBSharp.Http;
-using SubDBSharp;
-using System.IO;
-using System.Globalization;
-using DesktopClient.Models;
-using DesktopClient.Helpers;
 
 namespace DesktopClient
 {
@@ -135,20 +131,27 @@ namespace DesktopClient
             {
                 return;
             }
-            await DownloadSubtitleAsync();
 
-            MessageBox.Show("Download completed!");
-        }
+            // reset progress bar
+            progressBar1.Value = 0;
+            progressBar1.Maximum = _mediaFiles.Count;
 
-        private async Task DownloadSubtitleAsync()
-        {
+            // REPORT DOWNLOAD PROGRESS
+            var progressHandler = new Progress<int>(value =>
+            {
+                progressBar1.Value += value;
+            });
+
+            var progress = progressHandler as IProgress<int>;
+
             var cbi = (LanguageItem)comboBoxLanguage.SelectedItem;
 
             // encoding used to write content in file
             Encoding writeEncoding = ((EncodingItem)comboBoxEncoding.SelectedItem).Encoding;
 
-            foreach (MediaInfo mediaInfo in _mediaFiles)
+            for (int i = 0; i < _mediaFiles.Count; ++i)
             {
+                MediaInfo mediaInfo = _mediaFiles[i];
                 Response response = await _client.DownloadSubtitleAsync(mediaInfo.Hash, cbi.CultureInfo.TwoLetterISOLanguageName);
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
@@ -164,7 +167,12 @@ namespace DesktopClient
                 string content = readEncoding.GetString(buffer, 0, buffer.Length);
 
                 File.WriteAllText(path, content, writeEncoding);
+
+                // report progress
+                progress?.Report(1);
             }
+
+            MessageBox.Show("Download completed!");
         }
 
         private bool IsValid()
