@@ -45,6 +45,49 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DetectEncoding\EncodingTools.cs" />
+    <Compile Include="DetectEncoding\Multilang\CMLangConvertCharset.cs" />
+    <Compile Include="DetectEncoding\Multilang\CMLangConvertCharsetClass.cs" />
+    <Compile Include="DetectEncoding\Multilang\CMLangString.cs" />
+    <Compile Include="DetectEncoding\Multilang\CMLangStringClass.cs" />
+    <Compile Include="DetectEncoding\Multilang\CMultiLanguage.cs" />
+    <Compile Include="DetectEncoding\Multilang\CMultiLanguageClass.cs" />
+    <Compile Include="DetectEncoding\Multilang\IEnumCodePage.cs" />
+    <Compile Include="DetectEncoding\Multilang\IEnumRfc1766.cs" />
+    <Compile Include="DetectEncoding\Multilang\IEnumScript.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMLangCodePages.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMLangConvertCharset.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMLangFontLink.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMLangFontLink2.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMLangLineBreakConsole.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMLangString.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMLangStringAStr.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMLangStringBufA.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMLangStringBufW.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMLangStringWStr.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMultiLanguage.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMultiLanguage2.cs" />
+    <Compile Include="DetectEncoding\Multilang\IMultiLanguage3.cs" />
+    <Compile Include="DetectEncoding\Multilang\ISequentialStream.cs" />
+    <Compile Include="DetectEncoding\Multilang\IStream.cs" />
+    <Compile Include="DetectEncoding\Multilang\tagDetectEncodingInfo.cs" />
+    <Compile Include="DetectEncoding\Multilang\tagMIMECONTF.cs" />
+    <Compile Include="DetectEncoding\Multilang\tagMIMECPINFO.cs" />
+    <Compile Include="DetectEncoding\Multilang\tagMIMECSETINFO.cs" />
+    <Compile Include="DetectEncoding\Multilang\tagMLCPF.cs" />
+    <Compile Include="DetectEncoding\Multilang\tagMLDETECTCP.cs" />
+    <Compile Include="DetectEncoding\Multilang\tagMLSTR_FLAGS.cs" />
+    <Compile Include="DetectEncoding\Multilang\tagRFC1766INFO.cs" />
+    <Compile Include="DetectEncoding\Multilang\tagSCRIPFONTINFO.cs" />
+    <Compile Include="DetectEncoding\Multilang\tagSCRIPTINFO.cs" />
+    <Compile Include="DetectEncoding\Multilang\tagSTATSTG.cs" />
+    <Compile Include="DetectEncoding\Multilang\tagUNICODERANGE.cs" />
+    <Compile Include="DetectEncoding\Multilang\_FILETIME.cs" />
+    <Compile Include="DetectEncoding\Multilang\_LARGE_INTEGER.cs" />
+    <Compile Include="DetectEncoding\Multilang\_RemotableHandle.cs" />
+    <Compile Include="DetectEncoding\Multilang\_ULARGE_INTEGER.cs" />
+    <Compile Include="DetectEncoding\Multilang\__MIDL_IWinTypes_0009.cs" />
+    <Compile Include="Helpers\EncodingDetector.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -87,8 +130,6 @@
       <Name>SubDBSharp</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
