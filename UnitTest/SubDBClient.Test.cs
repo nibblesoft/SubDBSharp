@@ -1,6 +1,6 @@
 ﻿using SubDBSharp.Helpers;
-using System;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -16,7 +16,11 @@ namespace SubDBSharp.Test
             var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
             var response = await subDbClient.GetAvailableLanguagesAsync();
             Assert.NotNull(response.Body);
-            var availableLanguages = _reponseParser.ParseGetAvailablesLanguages(response.Body);
+
+            byte[] buffer = (byte[])response.Body;
+            string body = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            var availableLanguages = _reponseParser.ParseGetAvailablesLanguages(body);
+
             Assert.True(availableLanguages.Count > 0);
         }
 
@@ -26,7 +30,11 @@ namespace SubDBSharp.Test
             var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
             var response = await subDbClient.SearchSubtitleAsync("ffd8d4aa68033dc03d1c8ef373b9028c", false);
             Assert.NotNull(response.Body);
-            var availableLanguages = _reponseParser.ParseGetAvailablesLanguages(response.Body);
+
+            byte[] buffer = (byte[])response.Body;
+            string body = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+
+            var availableLanguages = _reponseParser.ParseGetAvailablesLanguages(body);
             Assert.True(availableLanguages.Count > 0);
         }
 

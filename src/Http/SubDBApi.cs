@@ -18,11 +18,6 @@ namespace SubDBSharp
         private readonly HttpClientHandler _httpClientHandler;
 
         /// <summary>
-        /// ANSI seems to be the default encoding used.
-        /// </summary>
-        private readonly Encoding AnsiEncoding = Encoding.GetEncoding(1252);
-
-        /// <summary>
         /// During development and for tests purposes, please use http://sandbox.thesubdb.com/ as the API url.
         /// </summary>
         /// <param name="productInformation">Product information</param>
@@ -33,7 +28,6 @@ namespace SubDBSharp
             _httpClientHandler = new HttpClientHandler()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
-
                 AllowAutoRedirect = false
             };
             _httpClient = new HttpClient(_httpClientHandler, true);
@@ -124,15 +118,14 @@ namespace SubDBSharp
 
         protected virtual async Task<Response> BuildResponse(HttpResponseMessage responseMessage)
         {
-            string responseBody = null;
+            object responseBody = null;
             using (var content = responseMessage.Content)
             {
                 if (content != null)
                 {
                     // get can be more processing like getting the metia type before reading
                     // the content information, but subdb always return string
-                    var buffer = await content.ReadAsByteArrayAsync();
-                    responseBody = AnsiEncoding.GetString(buffer, 0, buffer.Length);
+                    responseBody = await content.ReadAsByteArrayAsync();
                 }
             }
             return new Response(responseMessage.StatusCode, responseBody,

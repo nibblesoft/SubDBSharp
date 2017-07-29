@@ -12,6 +12,7 @@ using SubDBSharp;
 using System.IO;
 using System.Globalization;
 using DesktopClient.Models;
+using DesktopClient.Helpers;
 
 namespace DesktopClient
 {
@@ -37,7 +38,7 @@ namespace DesktopClient
 
             IgnoreExtensions = new HashSet<string>()
             {
-                ".srt", ".txt", ".nfo", ".mp3", ".jpg", ".rar", ".zip"
+                ".srt", ".txt", ".nfo", ".mp3", ".jpg", ".rar", ".zip", ".7zip"
             };
 
             _mediaFiles = new List<MediaInfo>();
@@ -54,7 +55,9 @@ namespace DesktopClient
         {
             // .Result can produce a deadlock in certain scenario's 
             Response languages = _client.GetAvailableLanguagesAsync().Result;
-            string csvLanguage = languages.Body;
+
+            byte[] buffer = (byte[])languages.Body;
+            string csvLanguage = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
 
             // e.g: en, pt, fr...
             foreach (string language in csvLanguage.Split(','))
@@ -140,7 +143,10 @@ namespace DesktopClient
         private async Task DownloadSubtitleAsync()
         {
             var cbi = (LanguageItem)comboBoxLanguage.SelectedItem;
-            Encoding encoding = ((EncodingItem)comboBoxEncoding.SelectedItem).Encoding;
+
+            // encoding used to write content in file
+            Encoding writeEncoding = ((EncodingItem)comboBoxEncoding.SelectedItem).Encoding;
+
             foreach (MediaInfo mediaInfo in _mediaFiles)
             {
                 Response response = await _client.DownloadSubtitleAsync(mediaInfo.Hash, cbi.CultureInfo.TwoLetterISOLanguageName);
@@ -149,7 +155,15 @@ namespace DesktopClient
                     continue;
                 }
                 string path = Path.Combine(Path.GetDirectoryName(mediaInfo.FileInfo.FullName), Path.GetFileNameWithoutExtension(mediaInfo.FileInfo.Name) + ".srt");
-                File.WriteAllText(path, response.Body, encoding);
+
+                byte[] buffer = (byte[])response.Body;
+
+                // encoding used to read data
+                Encoding readEncoding = EncodingDetector.DetectAnsiEncoding(buffer);
+
+                string content = readEncoding.GetString(buffer, 0, buffer.Length);
+
+                File.WriteAllText(path, content, writeEncoding);
             }
         }
 
