@@ -16,5 +16,10 @@ namespace DesktopClient
         {
             InitializeComponent();
         }
+
+        private void buttonBrowse_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
