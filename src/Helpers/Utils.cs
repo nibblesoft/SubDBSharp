@@ -18,6 +18,13 @@ namespace SubDBSharp
             using (var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (var md5 = MD5.Create())
             {
+
+                // file too short
+                if (fs.Length < bytesToRead)
+                {
+                    return string.Empty;
+                }
+
                 int len = (int)fs.Length;
                 byte[] buffer = new byte[bytesToRead * 2];
 
@@ -42,5 +49,11 @@ namespace SubDBSharp
             return _hexBuilder.ToString();
         }
 
+        public static bool IsUtf8(byte[] buffer)
+        {
+            // call this method to encoding;
+
+            return false;
+        }
     }
 }

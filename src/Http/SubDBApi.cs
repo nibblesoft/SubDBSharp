@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SubDBSharp
@@ -17,6 +18,11 @@ namespace SubDBSharp
         private readonly HttpClientHandler _httpClientHandler;
 
         /// <summary>
+        /// ANSI seems to be the default encoding used.
+        /// </summary>
+        private readonly Encoding AnsiEncoding = Encoding.GetEncoding(1252);
+
+        /// <summary>
         /// During development and for tests purposes, please use http://sandbox.thesubdb.com/ as the API url.
         /// </summary>
         /// <param name="productInformation">Product information</param>
@@ -26,7 +32,9 @@ namespace SubDBSharp
             BaseAddress = baseAddress;
             _httpClientHandler = new HttpClientHandler()
             {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+
+                AllowAutoRedirect = false
             };
             _httpClient = new HttpClient(_httpClientHandler, true);
 
@@ -34,6 +42,7 @@ namespace SubDBSharp
             //_httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(productInformation));
 
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", Utils.FormatUserAgent(productInformation));
+            // _httpClient.DefaultRequestHeaders.Connection.Add("keep-alive");
         }
 
         public Task<Response> GetAvailableLanguagesAsync()
@@ -94,12 +103,23 @@ namespace SubDBSharp
 
         protected virtual HttpRequestMessage BuildRequestMessage(Request request)
         {
-            return new HttpRequestMessage()
+            var requestMessage = new HttpRequestMessage()
             {
                 RequestUri = request.EndPoint,
                 Method = request.Method,
-                Content = request.Body
+                Content = request.Body,
             };
+
+            // requestMessage.Headers.TryGetValues("Connection", out ...)
+            requestMessage.Headers.Connection.Add("keep-alive");
+
+            // HttpRequestHeader is only available in .net45
+            //requestMessage.Headers.Remove(HttpRequestHeader.Connection);
+            //requestMessage.Headers.Add(HttpRequestHeader.Connection, "keep-alive");
+
+            //requestMessage.Headers.ConnectionClose = false;
+            requestMessage.Headers.AcceptCharset.ParseAdd("utf-8");
+            return requestMessage;
         }
 
         protected virtual async Task<Response> BuildResponse(HttpResponseMessage responseMessage)
@@ -111,7 +131,8 @@ namespace SubDBSharp
                 {
                     // get can be more processing like getting the metia type before reading
                     // the content information, but subdb always return string
-                    responseBody = await content.ReadAsStringAsync().ConfigureAwait(false);
+                    var buffer = await content.ReadAsByteArrayAsync();
+                    responseBody = AnsiEncoding.GetString(buffer, 0, buffer.Length);
                 }
             }
             return new Response(responseMessage.StatusCode, responseBody,
