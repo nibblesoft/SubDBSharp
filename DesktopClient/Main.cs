@@ -15,7 +15,7 @@ namespace DesktopClient
     public partial class Main : Form
     {
         // Selected directory from folder browse dialog
-        private string _rootDirctory;
+        private string _rootDirectory;
 
         // Contains list of movie/tv-show to be downloaded
         private IList<MediaInfo> _mediaFiles;
@@ -98,22 +98,16 @@ namespace DesktopClient
 
                 if (fbd.ShowDialog() == DialogResult.OK)
                 {
-                    _rootDirctory = fbd.SelectedPath;
-                    textBox1.Text = _rootDirctory;
-                    LoadMedias();
+                    textBoxPath.Text = fbd.SelectedPath;
                     // get all movie files and store them in a list for later access...
                 }
             }
         }
 
-        private void LoadMedias()
+        private int LoadMedias()
         {
-            if (!Directory.Exists(_rootDirctory))
-            {
-                return;
-            }
             _mediaFiles.Clear();
-            foreach (string file in Directory.GetFiles(_rootDirctory))
+            foreach (string file in Directory.GetFiles(_rootDirectory))
             {
                 if (IgnoreExtensions.Contains(Path.GetExtension(file)))
                 {
@@ -122,10 +116,12 @@ namespace DesktopClient
                 var mf = new MediaInfo(file);
                 _mediaFiles.Add(mf);
             }
+            return _mediaFiles.Count;
         }
 
         private async void ButtonDownload_Click(object sender, EventArgs e)
         {
+
             // validation fails
             if (!IsValid())
             {
@@ -177,37 +173,29 @@ namespace DesktopClient
 
         private bool IsValid()
         {
-            if (string.IsNullOrEmpty(_rootDirctory))
+            _rootDirectory = textBoxPath.Text.Trim();
+            if (!Path.IsPathRooted(_rootDirectory))
             {
-                MessageBox.Show("No directory selected");
+                MessageBox.Show("Invalid path!");
                 return false;
             }
-
-            if (!Directory.Exists(_rootDirctory))
+            if (!Directory.Exists(_rootDirectory))
             {
                 MessageBox.Show("Selected directory doesn't exits!");
                 return false;
             }
-
-            if (_mediaFiles.Count == 0)
+            // get media file content from selected path from textbox
+            if (LoadMedias() == 0)
             {
                 MessageBox.Show("Media files not loaded!");
                 return false;
             }
-
             return true;
         }
 
         private void textBox1_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effect = DragDropEffects.Copy;
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
-            }
+            e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
         }
 
         private void textBox1_DragDrop(object sender, DragEventArgs e)
@@ -215,9 +203,7 @@ namespace DesktopClient
             string[] directory = (string[])e.Data.GetData(DataFormats.FileDrop);
             if (directory.Length > 0)
             {
-                _rootDirctory = directory.First();
-                textBox1.Text = _rootDirctory;
-                LoadMedias();
+                textBoxPath.Text = directory.First();
             }
         }
     }
