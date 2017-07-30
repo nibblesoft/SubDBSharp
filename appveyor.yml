@@ -1,19 +1,15 @@
 version: 1.0.{build}
-
 configuration: Debug
-
 platform: Any CPU
 
 build:
   verbosity: minimal
-
-# buid options 
-build:
   project: SubDBSharp.sln
 
 # test command
 test:
-  xunit.console.clr4 **\bin\debug\UnitTest.dll /appveyor
+    assemblies:
+      - xunit.console.clr4 **\bin\debug\UnitTest.dll /appveyor
   
 matrix:
   fast_finish: true
