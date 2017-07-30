@@ -1,4 +1,11 @@
-version: '{build}'
+version: 1.0.{build}
+
+configuration: Debug
+
+platform: Any CPU
+
+build:
+  verbosity: minimal
 
 # buid options 
 build:
