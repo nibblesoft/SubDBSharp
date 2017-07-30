@@ -1,1 +1,12 @@
+version: '{build}'
 
+# buid options 
+build:
+  project: SubDBSharp.sln
+
+# test command
+test:
+  xunit.console.clr4 **\bin\debug\UnitTest.dll /appveyor
+  
+matrix:
+  fast_finish: true
