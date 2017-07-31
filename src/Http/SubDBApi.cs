@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SubDBSharp
@@ -81,7 +80,7 @@ namespace SubDBSharp
         public Task<Response> UploadSubtitle(string subtitle, string movie)
         {
             var uriBuilder = new UriBuilder(BaseAddress) { Query = "action=upload" };
-            Request request = BuildRequest(uriBuilder.Uri, HttpMethod.Post, CreateFormContent(subtitle, movie));
+            Request request = BuildRequest(uriBuilder.Uri, HttpMethod.Post, BuildFormContent(subtitle, movie));
             return SendDataAsync(request);
         }
 
@@ -137,29 +136,26 @@ namespace SubDBSharp
             return new Request(endPoint, method, body);
         }
 
-        private static HttpContent CreateFormContent(string subtitle, string movie)
+        private static HttpContent BuildFormContent(string subtitle, string movie)
         {
-            const string dispositionType = "form-data";
-
             var content = new MultipartFormDataContent("xYzZY");
 
-            // hash info
-            StringContent stringContent = stringContent = new StringContent(Utils.GetMovieHash(movie));
-            stringContent.Headers.ContentDisposition = new ContentDispositionHeaderValue(dispositionType)
+            // hash content
+            var stringContent = new StringContent(Utils.GetMovieHash(movie));
+            stringContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
             {
+                DispositionType = "form-data",
                 Name = "\"hash\""
             };
 
-            // subtitle file info
-            FileStream fs = File.OpenRead(subtitle);
-            var streamContent = new StreamContent(fs);
+            // subtitle content
+            var streamContent = new StreamContent(File.OpenRead(subtitle));
             streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-            var dispo = new ContentDispositionHeaderValue(dispositionType)
+            streamContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
             {
                 Name = "\"file\"",
                 FileName = $"\"{Path.GetFileName(subtitle)}\""
             };
-            streamContent.Headers.ContentDisposition = dispo;
 
             // add contents to form
             content.Add(stringContent);
@@ -170,9 +166,8 @@ namespace SubDBSharp
 
         public void Dispose()
         {
-            // will dispose _handler aswell (mentioned in contructor)
+            // calling dispose in _httClient handler will also dispose _httpClientHandler. (set in contructor)
             _httpClient.Dispose();
-            //_httpClientHandler.Dispose();
         }
     }
 }
