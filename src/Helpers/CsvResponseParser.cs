@@ -9,6 +9,10 @@ namespace SubDBSharp.Helpers
             var readonlyList = new List<Language>();
             foreach (var isoTwoLetter in response.Split(','))
             {
+                if (string.IsNullOrWhiteSpace(isoTwoLetter))
+                {
+                    continue;
+                }
                 var lang = new Language(isoTwoLetter);
                 readonlyList.Add(lang);
             }
