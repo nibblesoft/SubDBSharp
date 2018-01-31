@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SubDBSharp
+namespace SubDBSharp.Helpers
 {
     public static class ApiUrls
     {

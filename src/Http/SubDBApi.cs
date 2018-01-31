@@ -1,6 +1,8 @@
-﻿using SubDBSharp.Http;
+﻿using SubDBSharp.Helpers;
+using SubDBSharp.Http;
 using SubDBSharp.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,11 +12,10 @@ using System.Threading.Tasks;
 
 namespace SubDBSharp
 {
-    public class SubDBApi : IDisposable
+    public class SubDBApi : IDisposable, ISubDBApi
     {
         private readonly HttpClient _httpClient;
-        private readonly Uri BaseAddress;
-        private readonly HttpClientHandler _httpClientHandler;
+        private readonly Uri _baseAddress;
 
         /// <summary>
         /// During development and for tests purposes, please use http://sandbox.thesubdb.com/ as the API url.
@@ -23,15 +24,22 @@ namespace SubDBSharp
         /// <param name="baseAddress">Base address (endpoint)</param>
         public SubDBApi(ProductHeaderValue productInformation, Uri baseAddress)
         {
-            BaseAddress = baseAddress;
-            _httpClientHandler = new HttpClientHandler()
+            _baseAddress = baseAddress;
+
+            // http response message handler
+            var httpClientHandler = new HttpClientHandler()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
                 AllowAutoRedirect = false
             };
-            _httpClient = new HttpClient(_httpClientHandler, true);
+
+            _httpClient = new HttpClient(httpClientHandler, true)
+            {
+                BaseAddress = baseAddress,
+            };
 
             // we can't go with this logic because the User-Agent must contain implementor url (information)
+            // which doesn't follow standard user-agent format.
             //_httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(productInformation));
 
             _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", Utils.FormatUserAgent(productInformation));
@@ -40,7 +48,7 @@ namespace SubDBSharp
 
         public Task<Response> GetAvailableLanguagesAsync()
         {
-            var uriBuilder = new UriBuilder(BaseAddress) { Query = "action=languages" };
+            UriBuilder uriBuilder = new UriBuilder(_baseAddress) { Query = "action=languages" };
             Request request = BuildRequest(uriBuilder.Uri, HttpMethod.Get, null);
             return SendDataAsync(request);
         }
@@ -53,9 +61,23 @@ namespace SubDBSharp
         /// <returns></returns>
         public Task<Response> SearchSubtitle(string hash, bool getVersions = false)
         {
-            var fullUrl = BaseAddress.ApplySearchSubtitleParameters(hash, getVersions);
+#if !DEBUG
+            Uri fullUrl = BaseAddress.ApplySearchSubtitleParameters(hash, getVersions);
             Request request = BuildRequest(fullUrl, HttpMethod.Get, null);
             return SendDataAsync(request);
+#else
+            // NOTE: THIS CODE IS ONLY FOR TEST. (SUBDB DOESN'T ENCODED QUERY STRING)
+            // ONCE THE QUERY STRING IS ENCODED IT'S PUT INSIDE HTTP BODY ISNTEAD OF URL
+            Dictionary<string, string> requestParameters = new System.Collections.Generic.Dictionary<string, string>
+            {
+                ["action"] = "download",
+                ["hash"] = hash,
+                // TODO: Language.
+            };
+
+            Request request = BuildRequest(null, HttpMethod.Get, UriExtensions.GetFormURlEncodedContent(requestParameters));
+            return SendDataAsync(request);
+#endif
         }
 
         /// <summary>
@@ -67,7 +89,7 @@ namespace SubDBSharp
         /// <returns></returns>
         public Task<Response> DownloadSubtitle(string hash, params string[] languages)
         {
-            var fullUrl = BaseAddress.ApplyDownloadSubtitleParameters(hash, languages);
+            Uri fullUrl = _baseAddress.ApplyDownloadSubtitleParameters(hash, languages);
             Request request = BuildRequest(fullUrl, HttpMethod.Get, null);
             return SendDataAsync(request);
         }
@@ -75,11 +97,9 @@ namespace SubDBSharp
         /// <summary>
         /// To upload a subtitle, a HTTP POST request will be made to the server.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         public Task<Response> UploadSubtitle(string subtitle, string movie)
         {
-            var uriBuilder = new UriBuilder(BaseAddress) { Query = "action=upload" };
+            UriBuilder uriBuilder = new UriBuilder(_baseAddress) { Query = "action=upload" };
             Request request = BuildRequest(uriBuilder.Uri, HttpMethod.Post, BuildFormContent(subtitle, movie));
             return SendDataAsync(request);
         }
@@ -96,7 +116,7 @@ namespace SubDBSharp
 
         protected virtual HttpRequestMessage BuildRequestMessage(Request request)
         {
-            var requestMessage = new HttpRequestMessage()
+            HttpRequestMessage requestMessage = new HttpRequestMessage()
             {
                 RequestUri = request.EndPoint,
                 Method = request.Method,
@@ -104,7 +124,9 @@ namespace SubDBSharp
             };
 
             // requestMessage.Headers.TryGetValues("Connection", out ...)
-            requestMessage.Headers.Connection.Add("keep-alive");
+
+            // Note: Will be added twice if this line is uncommented
+            // requestMessage.Headers.Connection.Add("keep-alive");
 
             // HttpRequestHeader is only available in .net45
             //requestMessage.Headers.Remove(HttpRequestHeader.Connection);
@@ -117,31 +139,25 @@ namespace SubDBSharp
 
         protected virtual async Task<Response> BuildResponse(HttpResponseMessage responseMessage)
         {
-            object responseBody = null;
-            using (var content = responseMessage.Content)
+            object responseBody;
+            using (HttpContent content = responseMessage.Content)
             {
-                if (content != null)
-                {
-                    // get can be more processing like getting the metia type before reading
-                    // the content information, but subdb always return string
-                    responseBody = await content.ReadAsByteArrayAsync();
-                }
+                // get can be more processing like getting the metia type before reading
+                // the content information, but subdb always return string
+                responseBody = await content?.ReadAsByteArrayAsync();
             }
             return new Response(responseMessage.StatusCode, responseBody,
                 responseMessage.Headers.ToDictionary(h => h.Key, h => h.Value.First()));
         }
 
-        protected virtual Request BuildRequest(Uri endPoint, HttpMethod method, HttpContent body)
-        {
-            return new Request(endPoint, method, body);
-        }
+        protected virtual Request BuildRequest(Uri endPoint, HttpMethod method, HttpContent body) => new Request(endPoint, method, body);
 
         private static HttpContent BuildFormContent(string subtitle, string movie)
         {
-            var content = new MultipartFormDataContent("xYzZY");
+            MultipartFormDataContent content = new MultipartFormDataContent("xYzZY");
 
             // hash content
-            var stringContent = new StringContent(Utils.GetMovieHash(movie));
+            StringContent stringContent = new StringContent(Utils.GetMovieHash(movie));
             stringContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
             {
                 DispositionType = "form-data",
@@ -149,7 +165,7 @@ namespace SubDBSharp
             };
 
             // subtitle content
-            var streamContent = new StreamContent(File.OpenRead(subtitle));
+            StreamContent streamContent = new StreamContent(File.OpenRead(subtitle));
             streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
             streamContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
             {

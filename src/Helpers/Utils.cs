@@ -3,14 +3,11 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SubDBSharp
+namespace SubDBSharp.Helpers
 {
     public static class Utils
     {
-        public static string FormatUserAgent(ProductHeaderValue procInfo)
-        {
-            return string.Format("{0} ({1} {2})", "SubDB/1.0", procInfo, "http://github.com/ivandrofly");
-        }
+        public static string FormatUserAgent(ProductHeaderValue procInfo) => $"{"SubDB/1.0"} ({procInfo} {"http://github.com/ivandrofly"})";
 
         public static string GetMovieHash(string file)
         {
@@ -18,14 +15,9 @@ namespace SubDBSharp
             using (var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (var md5 = MD5.Create())
             {
-
                 // file too short
-                if (fs.Length < bytesToRead)
-                {
-                    return string.Empty;
-                }
+                if (fs.Length < bytesToRead) return string.Empty;
 
-                int len = (int)fs.Length;
                 byte[] buffer = new byte[bytesToRead * 2];
 
                 // Read first 64kb.
@@ -41,18 +33,15 @@ namespace SubDBSharp
 
         public static string ToHexadecimal(byte[] bytes)
         {
-            var _hexBuilder = new StringBuilder();
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                _hexBuilder.Append(bytes[i].ToString("x2"));
-            }
-            return _hexBuilder.ToString();
+            var sb = new StringBuilder();
+            for (int i = 0; i < bytes.Length; i++) sb.Append(bytes[i].ToString("x2"));
+
+            return sb.ToString();
         }
 
         public static bool IsUtf8(byte[] buffer)
         {
             // call this method to encoding;
-
             return false;
         }
     }

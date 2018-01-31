@@ -9,12 +9,7 @@ namespace SubDBSharp.Helpers
             var readonlyList = new List<Language>();
             foreach (var isoTwoLetter in response.Split(','))
             {
-                if (string.IsNullOrWhiteSpace(isoTwoLetter))
-                {
-                    continue;
-                }
-                var lang = new Language(isoTwoLetter);
-                readonlyList.Add(lang);
+                if (!string.IsNullOrWhiteSpace(isoTwoLetter)) readonlyList.Add(new Language(isoTwoLetter));
             }
             return readonlyList;
         }
@@ -25,20 +20,9 @@ namespace SubDBSharp.Helpers
             foreach (var token in response.Split(','))
             {
                 // Tokens are available only if getVersion == true
-                string[] tokens = token.Split(':');
-                Language lang = null;
-                if (getVersions)
-                {
-                    lang = new Language(tokens[0], int.Parse(tokens[1]));
-                }
-                else
-                {
-                    lang = new Language(tokens[0]);
-                }
-                if (lang != null)
-                {
-                    listLanguages.Add(lang);
-                }
+                var tokens = token.Split(':');
+                var lang = getVersions ? new Language(tokens[0], int.Parse(tokens[1])) : new Language(tokens[0]);
+                listLanguages.Add(lang);
             }
             return listLanguages;
         }

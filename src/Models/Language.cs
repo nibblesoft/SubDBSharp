@@ -1,6 +1,6 @@
 ﻿namespace SubDBSharp
 {
-    public class Language
+    public class Language : ILanguage
     {
         public Language(string name) : this(name, 0)
         {

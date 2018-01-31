@@ -3,7 +3,7 @@ using System.Net.Http;
 
 namespace SubDBSharp.Models
 {
-    public class Request
+    public class Request : IRequest
     {
         public Request(Uri endpoint, HttpMethod method, HttpContent content)
         {

@@ -4,7 +4,7 @@ using System.Net;
 
 namespace SubDBSharp.Http
 {
-    public class Response
+    public class Response : IResponse
     {
         public Response(HttpStatusCode statusCode, object body, IDictionary<string, string> headers)
         {

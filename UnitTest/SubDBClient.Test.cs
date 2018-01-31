@@ -8,7 +8,7 @@ namespace SubDBSharp.Test
 {
     public class UnitTest
     {
-        private static readonly IResponseParser _reponseParser = new CsvResponseParser();
+        private static readonly IResponseParser ReponseParser = new CsvResponseParser();
 
         [Fact]
         public async Task TestAvailableLanguages()
@@ -17,9 +17,9 @@ namespace SubDBSharp.Test
             var response = await subDbClient.GetAvailableLanguagesAsync();
             Assert.NotNull(response.Body);
 
-            byte[] buffer = (byte[])response.Body;
-            string body = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-            var availableLanguages = _reponseParser.ParseGetAvailablesLanguages(body);
+            var buffer = (byte[])response.Body;
+            var body = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            var availableLanguages = ReponseParser.ParseGetAvailablesLanguages(body);
 
             Assert.True(availableLanguages.Count > 0);
         }
@@ -30,11 +30,10 @@ namespace SubDBSharp.Test
             var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
             var response = await subDbClient.SearchSubtitleAsync("ffd8d4aa68033dc03d1c8ef373b9028c", false);
             Assert.NotNull(response.Body);
-
-            byte[] buffer = (byte[])response.Body;
-            string body = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-
-            var availableLanguages = _reponseParser.ParseGetAvailablesLanguages(body);
+            var buffer = (byte[])response.Body;
+            Assert.True(buffer.Length > 0);
+            var body = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            var availableLanguages = ReponseParser.ParseGetAvailablesLanguages(body);
             Assert.True(availableLanguages.Count > 0);
         }
 
@@ -42,7 +41,7 @@ namespace SubDBSharp.Test
         public async Task TestDownloadSubtitle()
         {
             var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
-            string movieHash = Utils.GetMovieHash("./Assets/dexter.mp4");
+            var movieHash = Utils.GetMovieHash("./Assets/dexter.mp4");
             var response = await subDbClient.DownloadSubtitleAsync(movieHash, "en");
             Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
         }
@@ -50,8 +49,8 @@ namespace SubDBSharp.Test
         [Fact]
         public async Task TestUploadSubtitle()
         {
-            string movie = "./Assets/dexter.mp4";
-            string subtitle = @"./Assets/Logan.2017.en.srt";
+            var movie = "./Assets/dexter.mp4";
+            var subtitle = @"./Assets/Logan.2017.en.srt";
             var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
             var response = await subDbClient.UploadSubtitleAsync(subtitle, movie);
             Assert.True(response.StatusCode == System.Net.HttpStatusCode.Created);

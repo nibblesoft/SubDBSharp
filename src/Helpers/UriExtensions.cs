@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 
-namespace SubDBSharp
+namespace SubDBSharp.Helpers
 {
     public static class UriExtensions
     {
@@ -60,10 +61,10 @@ namespace SubDBSharp
 
         public static Uri ApplySearchSubtitleParameters(this Uri uri, string hash, bool getVersions)
         {
-            string query = $"action=search&hash={hash}";
+            var query = $"action=search&hash={hash}";
             if (getVersions)
             {
-                query += $"&versions";
+                query += "&versions";
             }
             var uriBuilder = new UriBuilder(uri)
             {
@@ -75,14 +76,15 @@ namespace SubDBSharp
         public static Uri ApplyDownloadSubtitleParameters(this Uri uri, string hash, params string[] languages)
         {
             // en,es,fr,it,nl,pl,pt,ro,sv,tr
-
             var sb = new StringBuilder($"action=download&hash={hash}&language=");
-            string query = sb.ToString() + string.Join(",", languages);
+            var query = sb + string.Join(",", languages);
             var uriBuilder = new UriBuilder(uri)
             {
                 Query = query
             };
             return uriBuilder.Uri;
         }
+
+        public static HttpContent GetFormURlEncodedContent(Dictionary<string, string> values) => new FormUrlEncodedContent(values);
     }
 }
