@@ -9,7 +9,7 @@ namespace DesktopClient.Models
 
         public MediaInfo(string file)
         {
-            Hash = SubDBSharp.Utils.GetMovieHash(file);
+            Hash = SubDBSharp.Helpers.Utils.GetMovieHash(file);
             FileInfo = new FileInfo(file);
         }
     }

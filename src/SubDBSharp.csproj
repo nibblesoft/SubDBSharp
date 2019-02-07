@@ -7,7 +7,7 @@
     <PackageId>SubDBSharp</PackageId>
     <Authors>Ivandro Ismael</Authors>
     <Company>NibbleSoft</Company>
-    <Copyright>Copyright ©  2017 Ivandrofly</Copyright>
+    <Copyright>Copyright ©  2019 Ivandrofly</Copyright>
     <PackageProjectUrl>https://github.com/nibblesoft/SubDBSharp</PackageProjectUrl>
     <Description>C# implementation of http://thesubdb.com/api/</Description>
     <Version>1.0.4</Version>
@@ -22,5 +22,5 @@
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-
+ 
 </Project>
