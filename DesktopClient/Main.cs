@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DesktopClient
@@ -130,6 +131,23 @@ namespace DesktopClient
             progressBar1.Value = 0;
             progressBar1.Maximum = _mediaFiles.Count;
 
+            //disable all controls
+            ChangeControlsState(false);
+
+            await DownloadAsync();
+
+            //await Task.Yield(); was an attemp to continue on main thread
+            //ChangeControlsStates(false);
+
+        }
+
+        private async Task DownloadAsync()
+        {
+            var cbi = (LanguageItem)comboBoxLanguage.SelectedItem;
+
+            // encoding used to write content in file
+            Encoding writeEncoding = ((EncodingItem)comboBoxEncoding.SelectedItem).Encoding;
+
             // REPORT DOWNLOAD PROGRESS
             var progressHandler = new Progress<int>(value =>
             {
@@ -142,14 +160,6 @@ namespace DesktopClient
             });
 
             var progress = progressHandler as IProgress<int>;
-
-            var cbi = (LanguageItem)comboBoxLanguage.SelectedItem;
-
-            // encoding used to write content in file
-            Encoding writeEncoding = ((EncodingItem)comboBoxEncoding.SelectedItem).Encoding;
-
-            //disable all controls
-            ChangeControlsState(false);
 
             for (int i = 0; i < _mediaFiles.Count; ++i)
             {
@@ -171,14 +181,8 @@ namespace DesktopClient
                 Encoding readEncoding = EncodingDetector.DetectAnsiEncoding(buffer);
 
                 string content = readEncoding.GetString(buffer, 0, buffer.Length);
-
                 File.WriteAllText(path, content, writeEncoding);
-
             }
-
-            //await Task.Yield(); was an attemp to continue on main thread
-            //ChangeControlsStates(false);
-
         }
 
         private void ChangeControlsState(bool enabled)
