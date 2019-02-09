@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DesktopClient
@@ -95,7 +94,6 @@ namespace DesktopClient
             {
                 // Configure folder dialog
 
-
                 if (fbd.ShowDialog() == DialogResult.OK)
                 {
                     textBoxPath.Text = fbd.SelectedPath;
@@ -136,6 +134,11 @@ namespace DesktopClient
             var progressHandler = new Progress<int>(value =>
             {
                 progressBar1.Value += value;
+                if (progressBar1.Value == progressBar1.Maximum)
+                {
+                    MessageBox.Show("Download completed!");
+                    ChangeControlsState(true);
+                }
             });
 
             var progress = progressHandler as IProgress<int>;
@@ -145,10 +148,17 @@ namespace DesktopClient
             // encoding used to write content in file
             Encoding writeEncoding = ((EncodingItem)comboBoxEncoding.SelectedItem).Encoding;
 
+            //disable all controls
+            ChangeControlsState(false);
+
             for (int i = 0; i < _mediaFiles.Count; ++i)
             {
                 MediaInfo mediaInfo = _mediaFiles[i];
-                Response response = await _client.DownloadSubtitleAsync(mediaInfo.Hash, cbi.CultureInfo.TwoLetterISOLanguageName);
+                Response response = await _client.DownloadSubtitleAsync(mediaInfo.Hash, cbi.CultureInfo.TwoLetterISOLanguageName).ConfigureAwait(false);
+
+                // report progress
+                progress?.Report(1);
+
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     continue;
@@ -164,11 +174,21 @@ namespace DesktopClient
 
                 File.WriteAllText(path, content, writeEncoding);
 
-                // report progress
-                progress?.Report(1);
             }
 
-            MessageBox.Show("Download completed!");
+            //await Task.Yield(); was an attemp to continue on main thread
+            //ChangeControlsStates(false);
+
+        }
+
+        private void ChangeControlsState(bool enabled)
+        {
+            // combobox
+            comboBoxEncoding.Enabled = enabled;
+            comboBoxLanguage.Enabled = enabled;
+
+            // button
+            buttonDownload.Enabled = enabled;
         }
 
         private bool IsValid()

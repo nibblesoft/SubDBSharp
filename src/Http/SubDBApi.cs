@@ -68,7 +68,7 @@ namespace SubDBSharp
 #else
             // NOTE: THIS CODE IS ONLY FOR TEST. (SUBDB DOESN'T ENCODED QUERY STRING)
             // ONCE THE QUERY STRING IS ENCODED IT'S PUT INSIDE HTTP BODY ISNTEAD OF URL
-            Dictionary<string, string> requestParameters = new System.Collections.Generic.Dictionary<string, string>
+            Dictionary<string, string> requestParameters = new Dictionary<string, string>
             {
                 ["action"] = "download",
                 ["hash"] = hash,
