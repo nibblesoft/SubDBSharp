@@ -7,10 +7,11 @@ build:
   project: SubDBSharp.sln
 
 # test command
-test:
-    assemblies:
-      - xunit.console.clr4 **\bin\debug\UnitTest.dll /appveyor
+#test:
+#    assemblies:
+#      - xunit.console.clr4 **\bin\debug\UnitTest.dll /appveyor
 
+test_script:
 - cmd: >-
     dotnet restore
 
