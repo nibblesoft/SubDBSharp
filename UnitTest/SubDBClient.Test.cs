@@ -24,6 +24,7 @@ namespace SubDBSharp.Test
             Assert.True(availableLanguages.Count > 0);
         }
 
+        /*
         [Fact]
         public async Task TestSearchSubtitle()
         {
@@ -36,6 +37,7 @@ namespace SubDBSharp.Test
             var availableLanguages = ReponseParser.ParseGetAvailablesLanguages(body);
             Assert.True(availableLanguages.Count > 0);
         }
+        */
 
         [Fact]
         public async Task TestDownloadSubtitle()
