@@ -10,6 +10,13 @@ build:
 test:
     assemblies:
       - xunit.console.clr4 **\bin\debug\UnitTest.dll /appveyor
-  
+
+- cmd: >-
+    dotnet restore
+
+    cd UnitTest
+
+    dotnet xunit
+    
 matrix:
   fast_finish: true
