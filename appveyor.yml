@@ -1,23 +1,12 @@
 version: 1.0.{build}
 configuration: Debug
 platform: Any CPU
-
-build:
-  verbosity: minimal
-  project: SubDBSharp.sln
-
-# test command
-#test:
-#    assemblies:
-#      - xunit.console.clr4 **\bin\debug\UnitTest.dll /appveyor
-
+build_script:
+- cmd: dotnet build src\SubDBSharp.csproj
 test_script:
 - cmd: >-
     dotnet restore
 
     cd UnitTest
 
-    dotnet xunit
-    
-matrix:
-  fast_finish: true
+    dotnet test
