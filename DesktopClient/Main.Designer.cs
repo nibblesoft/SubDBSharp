@@ -120,7 +120,7 @@
             this.textBoxPath.Size = new System.Drawing.Size(349, 20);
             this.textBoxPath.TabIndex = 0;
             this.textBoxPath.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBox1_DragDrop);
-            this.textBoxPath.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBox1_DragEnter);
+            this.textBoxPath.DragEnter += new System.Windows.Forms.DragEventHandler(this.TextBox1_DragEnter);
             // 
             // buttonDownload
             // 

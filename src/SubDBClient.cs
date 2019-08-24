@@ -11,8 +11,6 @@ namespace SubDBSharp
         private readonly SubDBApi _subDbApi;
         private readonly IResponseParser _responseParser;
 
-        #region Constuctors
-
         public SubDBClient(ProductHeaderValue productInformation)
             : this(productInformation, ApiUrls.SubDBApiUrl)
         {
@@ -24,8 +22,6 @@ namespace SubDBSharp
             _subDbApi = new SubDBApi(productInformation, baseAddress);
             _responseParser = new CsvResponseParser();
         }
-
-        #endregion
 
         /// <summary>
         /// Lists the languages of all subtitles currenttly available in database.

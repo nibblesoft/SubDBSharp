@@ -67,7 +67,7 @@ namespace SubDBSharp
             return SendDataAsync(request);
 #else
             // NOTE: THIS CODE IS ONLY FOR TEST. (SUBDB DOESN'T ENCODED QUERY STRING)
-            // ONCE THE QUERY STRING IS ENCODED IT'S PUT INSIDE HTTP BODY ISNTEAD OF URL
+            // ONCE THE QUERY STRING IS ENCODED IT'S PUT INSIDE HTTP BODY INSTEAD OF URL
             Dictionary<string, string> requestParameters = new Dictionary<string, string>
             {
                 ["action"] = "download",
@@ -142,7 +142,7 @@ namespace SubDBSharp
             object responseBody;
             using (HttpContent content = responseMessage.Content)
             {
-                // get can be more processing like getting the metia type before reading
+                // get can be more processing like getting the media type before reading
                 // the content information, but subdb always return string
                 responseBody = await content?.ReadAsByteArrayAsync();
             }
@@ -150,7 +150,12 @@ namespace SubDBSharp
                 responseMessage.Headers.ToDictionary(h => h.Key, h => h.Value.First()));
         }
 
-        protected virtual Request BuildRequest(Uri endPoint, HttpMethod method, HttpContent body) => new Request(endPoint, method, body);
+        protected virtual Request BuildRequest(Uri endPoint, HttpMethod method, HttpContent body) => new Request
+        {
+            EndPoint = endPoint,
+            Body = body,
+            Method = method,
+        };
 
         private static HttpContent BuildFormContent(string subtitle, string movie)
         {
@@ -180,10 +185,6 @@ namespace SubDBSharp
             return content;
         }
 
-        public void Dispose()
-        {
-            // calling dispose in _httClient handler will also dispose _httpClientHandler. (set in contructor)
-            _httpClient.Dispose();
-        }
+        public void Dispose() => _httpClient.Dispose(); // calling dispose in _httClient handler will also dispose _httpClientHandler. (set in contructor)
     }
 }

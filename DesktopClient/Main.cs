@@ -4,6 +4,7 @@ using SubDBSharp;
 using SubDBSharp.Http;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace DesktopClient
         private string _rootDirectory;
 
         // Contains list of movie/tv-show to be downloaded
-        private IList<MediaInfo> _mediaFiles;
+        private readonly IList<MediaInfo> _mediaFiles;
 
         // SubDbSharp api client
         private readonly SubDBClient _client;
@@ -34,11 +35,10 @@ namespace DesktopClient
 
             IgnoreExtensions = new HashSet<string>()
             {
-                ".srt", ".txt", ".nfo", ".mp3", ".jpg", ".rar", ".zip", ".7zip"
+                ".srt", ".txt", ".nfo", ".mp3", ".jpg", ".rar", ".zip", ".7zip", ".png"
             };
 
             _mediaFiles = new List<MediaInfo>();
-
 
             // initialize encoding combobox
             InitializeEncoding();
@@ -50,7 +50,7 @@ namespace DesktopClient
         private void InitializeLanguageCombobox()
         {
             // .Result can produce a deadlock in certain scenario's 
-            Response languages = _client.GetAvailableLanguagesAsync().Result;
+            Response languages = _client.GetAvailableLanguagesAsync().GetAwaiter().GetResult();
 
             byte[] buffer = (byte[])languages.Body;
             string csvLanguage = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
@@ -58,9 +58,8 @@ namespace DesktopClient
             // e.g: en, pt, fr...
             foreach (string language in csvLanguage.Split(','))
             {
-                var cbi = new LanguageItem(language);
-                // TODO: Review why after .ToString()  return EnglishName (e.g: English) it keeps
-                // showing "en" instead...
+                LanguageItem cbi = new LanguageItem(language);
+                // TODO: Review why after .ToString() return EnglishName (e.g: English) it keeps showing "en" instead...
                 comboBoxLanguage.Items.Add(cbi);
             }
 
@@ -73,7 +72,7 @@ namespace DesktopClient
             int utf8Idx = -1;
             foreach (EncodingInfo encoding in Encoding.GetEncodings())
             {
-                var ei = new EncodingItem
+                EncodingItem ei = new EncodingItem
                 {
                     Encoding = encoding.GetEncoding()
                 };
@@ -91,14 +90,12 @@ namespace DesktopClient
 
         private void ButtonBrowse_Click(object sender, EventArgs e)
         {
-            using (var fbd = new FolderBrowserDialog())
+            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog { ShowNewFolderButton = true, SelectedPath = _rootDirectory })
             {
-                // Configure folder dialog
-
-                if (fbd.ShowDialog() == DialogResult.OK)
+                if (folderDialog.ShowDialog() == DialogResult.OK)
                 {
-                    textBoxPath.Text = fbd.SelectedPath;
-                    // get all movie files and store them in a list for later access...
+                    _rootDirectory = folderDialog.SelectedPath;
+                    textBoxPath.Text = folderDialog.SelectedPath;
                 }
             }
         }
@@ -108,19 +105,20 @@ namespace DesktopClient
             _mediaFiles.Clear();
             foreach (string file in Directory.GetFiles(_rootDirectory))
             {
-                if (IgnoreExtensions.Contains(Path.GetExtension(file)))
+                // filter extension
+                string lowerExtension = Path.GetExtension(file);
+                if (IgnoreExtensions.Contains(lowerExtension))
                 {
                     continue;
                 }
-                var mf = new MediaInfo(file);
-                _mediaFiles.Add(mf);
+
+                _mediaFiles.Add(MediaInfo.FromFile(file));
             }
             return _mediaFiles.Count;
         }
 
         private async void ButtonDownload_Click(object sender, EventArgs e)
         {
-
             // validation fails
             if (!IsValid())
             {
@@ -134,24 +132,29 @@ namespace DesktopClient
             //disable all controls
             ChangeControlsState(false);
 
-            await DownloadAsync();
+            await DownloadAsync().ConfigureAwait(true);
 
-            //await Task.Yield(); was an attemp to continue on main thread
+            // force async 
+            //await Task.Yield();
             //ChangeControlsStates(false);
-
         }
 
         private async Task DownloadAsync()
         {
-            var cbi = (LanguageItem)comboBoxLanguage.SelectedItem;
+            LanguageItem cbi = (LanguageItem)comboBoxLanguage.SelectedItem;
 
             // encoding used to write content in file
             Encoding writeEncoding = ((EncodingItem)comboBoxEncoding.SelectedItem).Encoding;
 
-            // REPORT DOWNLOAD PROGRESS
-            var progressHandler = new Progress<int>(value =>
+            // report download progress
+            Progress<string> progressReporter = new Progress<string>(value =>
             {
-                progressBar1.Value += value;
+                //progressBar1.Value += value;
+                progressBar1.Value += 1;
+                if (File.Exists(value))
+                {
+                    Trace.WriteLine("file downloaded!");
+                }
                 if (progressBar1.Value == progressBar1.Maximum)
                 {
                     MessageBox.Show("Download completed!");
@@ -159,29 +162,37 @@ namespace DesktopClient
                 }
             });
 
-            var progress = progressHandler as IProgress<int>;
+            // this need to happen because Progress<T> implement IProgress interface explicitly
+            IProgress<string> reporter = progressReporter;
 
             for (int i = 0; i < _mediaFiles.Count; ++i)
             {
                 MediaInfo mediaInfo = _mediaFiles[i];
-                Response response = await _client.DownloadSubtitleAsync(mediaInfo.Hash, cbi.CultureInfo.TwoLetterISOLanguageName).ConfigureAwait(false);
 
-                // report progress
-                progress?.Report(1);
+                Response response = await _client.DownloadSubtitleAsync(mediaInfo.Hash,
+                    cbi.CultureInfo.TwoLetterISOLanguageName).ConfigureAwait(false);
 
+                // download failed
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
+                    Trace.WriteLine($"Failed downloadeding: {_mediaFiles[i].FileInfo.Name}");
                     continue;
                 }
-                string path = Path.Combine(Path.GetDirectoryName(mediaInfo.FileInfo.FullName), Path.GetFileNameWithoutExtension(mediaInfo.FileInfo.Name) + ".srt");
+
+                // generate file output location
+                string path = Path.Combine(Path.GetDirectoryName(mediaInfo.FileInfo.FullName),
+                    Path.GetFileNameWithoutExtension(mediaInfo.FileInfo.Name) + ".srt");
 
                 byte[] buffer = (byte[])response.Body;
 
-                // encoding used to read data
-                Encoding readEncoding = EncodingDetector.DetectAnsiEncoding(buffer);
+                // read content using guessed encoding
+                string content = EncodingDetector.DetectAnsiEncoding(buffer).GetString(buffer, 0, buffer.Length);
 
-                string content = readEncoding.GetString(buffer, 0, buffer.Length);
+                // write downloaded file to disk
                 File.WriteAllText(path, content, writeEncoding);
+
+                // report progress
+                reporter?.Report(path);
             }
         }
 
@@ -197,7 +208,6 @@ namespace DesktopClient
 
         private bool IsValid()
         {
-            _rootDirectory = textBoxPath.Text.Trim();
             if (!Path.IsPathRooted(_rootDirectory))
             {
                 MessageBox.Show("Invalid path!");
@@ -217,7 +227,7 @@ namespace DesktopClient
             return true;
         }
 
-        private void textBox1_DragEnter(object sender, DragEventArgs e)
+        private void TextBox1_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
         }
@@ -231,4 +241,5 @@ namespace DesktopClient
             }
         }
     }
+
 }
