@@ -61,23 +61,20 @@ namespace SubDBSharp
         /// <returns></returns>
         public Task<Response> SearchSubtitle(string hash, bool getVersions = false)
         {
-#if !DEBUG
-            Uri fullUrl = BaseAddress.ApplySearchSubtitleParameters(hash, getVersions);
+
+            Uri fullUrl = _baseAddress.ApplySearchSubtitleParameters(hash, getVersions);
             Request request = BuildRequest(fullUrl, HttpMethod.Get, null);
-            return SendDataAsync(request);
-#else
             // NOTE: THIS CODE IS ONLY FOR TEST. (SUBDB DOESN'T ENCODED QUERY STRING)
             // ONCE THE QUERY STRING IS ENCODED IT'S PUT INSIDE HTTP BODY INSTEAD OF URL
-            Dictionary<string, string> requestParameters = new Dictionary<string, string>
-            {
-                ["action"] = "download",
-                ["hash"] = hash,
-                // TODO: Language.
-            };
+            //Dictionary<string, string> requestParameters = new Dictionary<string, string>
+            //{
+            //    ["action"] = "download",
+            //    ["hash"] = hash,
+            //    // TODO: Language.
+            //};
+            //Request request = BuildRequest(new Uri("http://sandbox.thesubdb.com"), HttpMethod.Get, UriExtensions.GetFormURlEncodedContent(requestParameters));
 
-            Request request = BuildRequest(null, HttpMethod.Get, UriExtensions.GetFormURlEncodedContent(requestParameters));
             return SendDataAsync(request);
-#endif
         }
 
         /// <summary>

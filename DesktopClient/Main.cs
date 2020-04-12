@@ -134,6 +134,7 @@ namespace DesktopClient
 
             await DownloadAsync().ConfigureAwait(true);
 
+            ChangeControlsState(true);
             // force async 
             //await Task.Yield();
             //ChangeControlsStates(false);
