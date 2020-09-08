@@ -104,9 +104,10 @@ namespace DesktopClient
         {
             _mediaFiles.Clear();
             foreach (string file in Directory.GetFiles(_rootDirectory))
+            //foreach (string file in Directory.GetFiles(_rootDirectory, "*", SearchOption.AllDirectories))
             {
                 // filter extension
-                string lowerExtension = Path.GetExtension(file);
+                string lowerExtension = Path.GetExtension(file).ToLowerInvariant();
                 if (IgnoreExtensions.Contains(lowerExtension))
                 {
                     continue;
@@ -209,6 +210,7 @@ namespace DesktopClient
 
         private bool IsValid()
         {
+            _rootDirectory = textBoxPath.Text;
             if (!Path.IsPathRooted(_rootDirectory))
             {
                 MessageBox.Show("Invalid path!");
@@ -239,6 +241,52 @@ namespace DesktopClient
             if (directory.Length > 0)
             {
                 textBoxPath.Text = directory.First();
+            }
+        }
+
+        private async void buttonUpload_Click(object sender, EventArgs e)
+        {
+
+            if (!IsValid())
+            {
+                return;
+            }
+
+            // change control status to indicate a upload process in about to start
+            var sb = new StringBuilder();
+            foreach (var movieInfo in _mediaFiles)
+            {
+                foreach (var subtitle in movieInfo.Subtitles)
+                {
+                    var response = await _client.UploadSubtitleAsync(subtitle, movieInfo.FileInfo.FullName);
+                    if (response.StatusCode == System.Net.HttpStatusCode.Created)
+                    {
+                        sb.AppendFormat(Path.GetFileNameWithoutExtension(subtitle));
+                    }
+                    else
+                    {
+                        sb.AppendFormat($"{Path.GetFileNameWithoutExtension(subtitle)} - {response.StatusCode}");
+                    }
+                    sb.AppendLine();
+                    /*
+                    'Uploaded': (HTTP/1.1 201 Created)
+                    If everything was OK, the HTTP status code 201 will be returned.
+            
+                    'Duplicated': (HTTP/1.1 403 Forbidden)
+                    If the subtitle file already exists in our database, the HTTP status code 403 will be returned.
+            
+                    'Invalid': (HTTP/1.1 415 Unsupported Media Type)
+                    If the subtitle file is not supported by our database, the HTTP status code 415 will be returned.
+            
+                    'Malformed': (HTTP/1.1 400 Bad Request)
+                    If the request was malformed, the HTTP status code 400 will be returned.
+                     */
+                }
+            }
+
+            if (sb.Length > 0)
+            {
+                MessageBox.Show(sb.ToString());
             }
         }
     }

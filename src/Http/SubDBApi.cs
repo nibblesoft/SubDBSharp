@@ -2,7 +2,6 @@
 using SubDBSharp.Http;
 using SubDBSharp.Models;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -61,7 +60,6 @@ namespace SubDBSharp
         /// <returns></returns>
         public Task<Response> SearchSubtitle(string hash, bool getVersions = false)
         {
-
             Uri fullUrl = _baseAddress.ApplySearchSubtitleParameters(hash, getVersions);
             Request request = BuildRequest(fullUrl, HttpMethod.Get, null);
             // NOTE: THIS CODE IS ONLY FOR TEST. (SUBDB DOESN'T ENCODED QUERY STRING)
@@ -73,7 +71,6 @@ namespace SubDBSharp
             //    // TODO: Language.
             //};
             //Request request = BuildRequest(new Uri("http://sandbox.thesubdb.com"), HttpMethod.Get, UriExtensions.GetFormURlEncodedContent(requestParameters));
-
             return SendDataAsync(request);
         }
 
@@ -107,7 +104,7 @@ namespace SubDBSharp
             using (HttpRequestMessage requestMessage = BuildRequestMessage(request))
             using (HttpResponseMessage responseMessage = await _httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false))
             {
-                return await BuildResponse(responseMessage);
+                return await BuildResponse(responseMessage).ConfigureAwait(false);
             }
         }
 
