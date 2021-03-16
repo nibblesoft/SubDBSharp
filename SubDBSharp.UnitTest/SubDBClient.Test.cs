@@ -1,10 +1,10 @@
-﻿using SubDBSharp.Helpers;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using SubDBSharp.Helpers;
 using Xunit;
 
-namespace SubDBSharp.Test
+namespace SubDBSharp.UnitTest
 {
     public class UnitTest
     {
@@ -17,7 +17,7 @@ namespace SubDBSharp.Test
             var response = await subDbClient.GetAvailableLanguagesAsync();
             Assert.NotNull(response.Body);
 
-            var buffer = (byte[])response.Body;
+            var buffer = (byte[]) response.Body;
             var body = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
             var availableLanguages = ReponseParser.ParseGetAvailablesLanguages(body);
 
@@ -30,7 +30,7 @@ namespace SubDBSharp.Test
             var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
             var response = await subDbClient.SearchSubtitleAsync("ffd8d4aa68033dc03d1c8ef373b9028c", false);
             Assert.NotNull(response.Body);
-            var buffer = (byte[])response.Body;
+            var buffer = (byte[]) response.Body;
             Assert.True(buffer.Length > 0);
             var body = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
             var availableLanguages = ReponseParser.ParseGetAvailablesLanguages(body);
@@ -56,6 +56,6 @@ namespace SubDBSharp.Test
             Assert.True(response.StatusCode == System.Net.HttpStatusCode.Created);
         }
 
-        public static ProductHeaderValue GetProductInfo() => new ProductHeaderValue("UnitTest", "1.0");
+        private static ProductHeaderValue GetProductInfo() => new ProductHeaderValue("SubDBSharp.UnitTest", "1.0");
     }
 }

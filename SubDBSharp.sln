@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28516.95
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTest.csproj", "{A8791B2B-B148-47BA-9B9D-A9A2163CCA48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubDBSharp.UnitTest", "SubDBSharp.UnitTest\SubDBSharp.UnitTest.csproj", "{A8791B2B-B148-47BA-9B9D-A9A2163CCA48}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubDBSharp", "src\SubDBSharp.csproj", "{D741CD9F-01AA-440D-BB49-0D0FD0B6B7DF}"
 EndProject

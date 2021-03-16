@@ -1,8 +1,8 @@
-﻿using SubDBSharp.Helpers;
-using System.IO;
+﻿using System.IO;
+using SubDBSharp.Helpers;
 using Xunit;
 
-namespace SubDBSharp.Test
+namespace SubDBSharp.UnitTest
 {
     public class UtilsTest
     {
