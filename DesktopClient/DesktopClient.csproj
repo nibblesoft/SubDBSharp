@@ -1,136 +1,15 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FBF35ED7-BA7F-47FF-8C1E-B8AACAE1A2A4}</ProjectGuid>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>DesktopClient</RootNamespace>
-    <AssemblyName>DesktopClient</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\src\SubDBSharp.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DetectEncoding\EncodingTools.cs" />
-    <Compile Include="DetectEncoding\Multilang\CMLangConvertCharset.cs" />
-    <Compile Include="DetectEncoding\Multilang\CMLangConvertCharsetClass.cs" />
-    <Compile Include="DetectEncoding\Multilang\CMLangString.cs" />
-    <Compile Include="DetectEncoding\Multilang\CMLangStringClass.cs" />
-    <Compile Include="DetectEncoding\Multilang\CMultiLanguage.cs" />
-    <Compile Include="DetectEncoding\Multilang\CMultiLanguageClass.cs" />
-    <Compile Include="DetectEncoding\Multilang\IEnumCodePage.cs" />
-    <Compile Include="DetectEncoding\Multilang\IEnumRfc1766.cs" />
-    <Compile Include="DetectEncoding\Multilang\IEnumScript.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMLangCodePages.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMLangConvertCharset.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMLangFontLink.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMLangFontLink2.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMLangLineBreakConsole.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMLangString.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMLangStringAStr.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMLangStringBufA.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMLangStringBufW.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMLangStringWStr.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMultiLanguage.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMultiLanguage2.cs" />
-    <Compile Include="DetectEncoding\Multilang\IMultiLanguage3.cs" />
-    <Compile Include="DetectEncoding\Multilang\ISequentialStream.cs" />
-    <Compile Include="DetectEncoding\Multilang\IStream.cs" />
-    <Compile Include="DetectEncoding\Multilang\tagDetectEncodingInfo.cs" />
-    <Compile Include="DetectEncoding\Multilang\tagMIMECONTF.cs" />
-    <Compile Include="DetectEncoding\Multilang\tagMIMECPINFO.cs" />
-    <Compile Include="DetectEncoding\Multilang\tagMIMECSETINFO.cs" />
-    <Compile Include="DetectEncoding\Multilang\tagMLCPF.cs" />
-    <Compile Include="DetectEncoding\Multilang\tagMLDETECTCP.cs" />
-    <Compile Include="DetectEncoding\Multilang\tagMLSTR_FLAGS.cs" />
-    <Compile Include="DetectEncoding\Multilang\tagRFC1766INFO.cs" />
-    <Compile Include="DetectEncoding\Multilang\tagSCRIPFONTINFO.cs" />
-    <Compile Include="DetectEncoding\Multilang\tagSCRIPTINFO.cs" />
-    <Compile Include="DetectEncoding\Multilang\tagSTATSTG.cs" />
-    <Compile Include="DetectEncoding\Multilang\tagUNICODERANGE.cs" />
-    <Compile Include="DetectEncoding\Multilang\_FILETIME.cs" />
-    <Compile Include="DetectEncoding\Multilang\_LARGE_INTEGER.cs" />
-    <Compile Include="DetectEncoding\Multilang\_RemotableHandle.cs" />
-    <Compile Include="DetectEncoding\Multilang\_ULARGE_INTEGER.cs" />
-    <Compile Include="DetectEncoding\Multilang\__MIDL_IWinTypes_0009.cs" />
-    <Compile Include="Helpers\EncodingDetector.cs" />
-    <Compile Include="Main.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Main.Designer.cs">
-      <DependentUpon>Main.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\EncodingItem.cs" />
-    <Compile Include="Models\LanguageItem.cs" />
-    <Compile Include="Models\MediaInfo.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Main.resx">
-      <DependentUpon>Main.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
+    <PackageReference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\src\SubDBSharp.csproj">
-      <Project>{d741cd9f-01aa-440d-bb49-0d0fd0b6b7df}</Project>
-      <Name>SubDBSharp</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
