@@ -1,0 +1,9 @@
+﻿<Solution>
+  <Folder Name="/.Solution Items/">
+    <File Path="Directory.Packages.props" />
+    <File Path="Directory.Build.props" />
+  </Folder>
+  <Project Path="DesktopClient\DesktopClient.csproj" Type="Classic C#" />
+  <Project Path="src\SubDBSharp.csproj" />
+  <Project Path="SubDBSharp.UnitTest\SubDBSharp.UnitTest.csproj" />
+</Solution>
