@@ -15,7 +15,7 @@ namespace SubDBSharp.UnitTest
         {
             // NOTE: SINCE THE SANDBOX IS ALSO DOWN, USE MOCK API
             // TODO:
-            //  * Use NSubstitue to mock the http clien
+            //  * Use NSubstitue to mock the http client
             var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
             var response = await subDbClient.GetAvailableLanguagesAsync();
             Assert.NotNull(response.Body);
