@@ -10,7 +10,4 @@
   <ItemGroup>
     <ProjectReference Include="..\src\SubDBSharp.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" />
-  </ItemGroup>
 </Project>
