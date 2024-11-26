@@ -10,34 +10,37 @@ namespace SubDBSharp.UnitTest
     {
         private static readonly IResponseParser ReponseParser = new CsvResponseParser();
 
-        [Fact]
+        [Fact(Skip = "Sandbox is down")]
         public async Task TestAvailableLanguages()
         {
+            // NOTE: SINCE THE SANDBOX IS ALSO DOWN, USE MOCK API
+            // TODO:
+            //  * Use NSubstitue to mock the http clien
             var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
             var response = await subDbClient.GetAvailableLanguagesAsync();
             Assert.NotNull(response.Body);
 
-            var buffer = (byte[]) response.Body;
+            var buffer = (byte[])response.Body;
             var body = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
             var availableLanguages = ReponseParser.ParseGetAvailablesLanguages(body);
 
             Assert.True(availableLanguages.Count > 0);
         }
 
-        [Fact]
+        [Fact(Skip = "Sandbox is down")]
         public async Task TestSearchSubtitle()
         {
             var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
             var response = await subDbClient.SearchSubtitleAsync("ffd8d4aa68033dc03d1c8ef373b9028c", false);
             Assert.NotNull(response.Body);
-            var buffer = (byte[]) response.Body;
+            var buffer = (byte[])response.Body;
             Assert.True(buffer.Length > 0);
             var body = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
             var availableLanguages = ReponseParser.ParseGetAvailablesLanguages(body);
             Assert.True(availableLanguages.Count > 0);
         }
 
-        [Fact]
+        [Fact(Skip = "Sandbox is down")]
         public async Task TestDownloadSubtitle()
         {
             var subDbClient = new SubDBClient(GetProductInfo(), ApiUrls.SubDBApiSandBoxUrl);
@@ -46,7 +49,7 @@ namespace SubDBSharp.UnitTest
             Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
         }
 
-        [Fact]
+        [Fact(Skip = "Sandbox is down")]
         public async Task TestUploadSubtitle()
         {
             var movie = "./Assets/dexter.mp4";
