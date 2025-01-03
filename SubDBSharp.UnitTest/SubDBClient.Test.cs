@@ -8,7 +8,7 @@ namespace SubDBSharp.UnitTest
 {
     public class UnitTest
     {
-        private static readonly IResponseParser ReponseParser = new CsvResponseParser();
+        private static readonly IResponseParser AutoResponseParser = new CsvResponseParser();
 
         [Fact(Skip = "Sandbox is down")]
         public async Task TestAvailableLanguages()
@@ -22,7 +22,7 @@ namespace SubDBSharp.UnitTest
 
             var buffer = (byte[])response.Body;
             var body = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-            var availableLanguages = ReponseParser.ParseGetAvailablesLanguages(body);
+            var availableLanguages = AutoResponseParser.ParseGetAvailablesLanguages(body);
 
             Assert.True(availableLanguages.Count > 0);
         }
@@ -36,7 +36,7 @@ namespace SubDBSharp.UnitTest
             var buffer = (byte[])response.Body;
             Assert.True(buffer.Length > 0);
             var body = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-            var availableLanguages = ReponseParser.ParseGetAvailablesLanguages(body);
+            var availableLanguages = AutoResponseParser.ParseGetAvailablesLanguages(body);
             Assert.True(availableLanguages.Count > 0);
         }
 
